@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cây Phả Hệ Tộc Nguyễn Đức</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f5ef;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #800000;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 26px;
+        }
+
+        /* Thanh menu Lời tự & Diễn ca */
+        .extra-bar {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 12px;
+        }
+        .extra-btn {
+            background: #fff;
+            border: 2px solid #800000;
+            color: #800000;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .extra-btn:hover {
+            background: #800000;
+            color: #fff;
+        }
+
+        /* Cấu trúc cây thư mục CSS Tree gọn nhẹ */
+        .tree-viewport {
+            width: 100%;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 40px;
+        }
+
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree ul {
+            padding-top: 15px; 
+            position: relative;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .tree li {
+            position: relative;
+            padding: 15px 4px 0 4px;
+            text-align: center;
+            list-style-type: none;
+        }
+
+        /* Đường nối cây thư mục */
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 2px solid #800000;
+            width: 50%;
+            height: 15px;
+        }
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 2px solid #800000;
+        }
+
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+        .tree li:only-child {
+            padding-top: 0;
+        }
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0;
+        }
+        .tree li:last-child::before {
+            border-right: 2px solid #800000;
+            border-radius: 0 4px 0 0;
+        }
+        .tree li:first-child::after {
+            border-radius: 4px 0 0 0;
+        }
+
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 2px solid #800000;
+            width: 0;
+            height: 15px;
+        }
+
+        /* Khối hiển thị thông tin nút (Node) nhỏ gọn */
+        .node-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .node-btn {
+            background: #fff;
+            border: 1.5px solid #800000;
+            border-radius: 6px;
+            padding: 6px 10px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            min-width: 110px;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .node-btn:hover, .node-wrapper.active .node-btn {
+            background-color: #800000;
+            color: #fff;
+        }
+
+        .node-btn:hover .node-title, .node-wrapper.active .node-btn .node-title {
+            color: #ffcccc;
+        }
+
+        .node-title {
+            font-size: 9.5px;
+            font-weight: bold;
+            color: #800000;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .node-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Nút thu gọn/mở rộng cành cây */
+        .toggle-btn {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            line-height: 12px;
+            background: #800000;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 10px;
+            margin-left: 4px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        /* Khung diễn giải (Tooltip) nổi ngay bên cạnh nút */
+        .tooltip-box {
+            display: none;
+            position: absolute;
+            top: -5px;
+            left: 105%;
+            width: 260px;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 10px 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border: 1px solid #ccc;
+            text-align: left;
+            color: #333;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .node-wrapper.left-pop .tooltip-box {
+            left: auto;
+            right: 105%;
+        }
+
+        .node-wrapper.active .tooltip-box {
+            display: block;
+        }
+
+        .pop-title {
+            color: #800000;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
+            margin-bottom: 5px;
+        }
+        
+        .collapsed > ul {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PHẢ HỆ DÒNG HỌ NGUYỄN ĐỨC</h1>
+
+    <!-- Menu Lời tự & Diễn ca -->
+    <div class="extra-bar">
+        <div class="node-wrapper">
+            <button class="extra-btn" onclick="togglePopup(this)">📜 Lời Tự Gia Phổ (1955)</button>
+            <div class="tooltip-box">
+                <div class="pop-title">Lời Tự Gia Phổ (1955)</div>
+                <b>Ngày 1/1 Ất Mùi (1955):</b> Do cháu đời 13 là Đức Bính Ký (80 tuổi) tục biên từ bản chữ Hán thời Tây Sơn của ông Ba Minh Hầu sang Quốc văn [trích dẫn: 30].
+            </div>
+        </div>
+        <div class="node-wrapper">
+            <button class="extra-btn" onclick="togglePopup(this)">🎵 Diễn Ca Lời Tự</button>
+            <div class="tooltip-box">
+                <div class="pop-title">Diễn Ca Lời Tự</div>
+                Bài thơ ghi lại lịch sử dòng họ Nguyễn Đức tại Hoa Phong, nhắc nhở con cháu giữ gìn đạo hiếu [trích dẫn: 31].
+            </div>
+        </div>
+    </div>
+
+    <!-- Sơ đồ cây phả hệ thu gọn tinh giản -->
+    <div class="tree-viewport">
+        <div class="tree">
+            <ul>
+                <li>
+                    <!-- ĐỜI 1 -->
+                    <div class="node-wrapper">
+                        <div class="node-btn" onclick="togglePopup(this)">
+                            <div class="node-title">Thủy Tổ (Đời 1)</div>
+                            <div class="node-name">Nguyễn Trang</div>
+                        </div>
+                        <div class="tooltip-box">
+                            <div class="pop-title">Thủy Tổ: Nguyễn Trang [trích dẫn: 32]</div>
+                            <b>Gia tiên:</b> Làng Hoa Phong, Lệ Dương, Thanh Hóa, sau vào Quảng Nam [trích dẫn: 32].<br>
+                            <b>Phối ngẫu:</b> Bà Thị Đại [trích dẫn: 32]. Mộ xứ Dương Thần [trích dẫn: 32].
+                        </div>
+                    </div>
+                    <ul>
+                        <li>
+                            <!-- ĐỜI 2 -->
+                            <div class="node-wrapper">
+                                <div class="node-btn" onclick="togglePopup(this)">
+                                    <div class="node-title">Nhị Thế Tổ (Đời 2)</div>
+                                    <div class="node-name">Chức Sanh Đả</div>
+                                </div>
+                                <div class="tooltip-box">
+                                    <div class="pop-title">Nhị Thế Tổ [trích dẫn: 33]</div>
+                                    Chức Sanh đả ở 4 phủ, sinh 2 con trai khởi đầu 2 phái [trích dẫn: 33]. Mộ tại xứ Dương Thần [trích dẫn: 33].
+                                </div>
+                            </div>
+                            <ul>
+                                <!-- ĐỜI 3 - PHÁI 1 -->
+                                <li>
+                                    <div class="node-wrapper">
+                                        <div class="node-btn" onclick="togglePopup(this)">
+                                            <div class="node-title">Tam Thế Tổ - Phái 1</div>
+                                            <div class="node-name">Đức Quang</div>
+                                        </div>
+                                        <div class="tooltip-box">
+                                            <div class="pop-title">Tam Thế Tổ (Phái 1): Đức Quang [trích dẫn: 34]</div>
+                                            Con lớn Nhị Thế Tổ, làm chức Sanh đỗ bến phủ, sinh ngài Đức Thọ [trích dẫn: 34].
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <!-- ĐỜI 4 -->
+                                        <li>
+                                            <div class="node-wrapper">
+                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                    <div class="node-title">Tứ Thế Tổ (Đời 4)</div>
+                                                    <div class="node-name">Đức Thọ</div>
+                                                </div>
+                                                <div class="tooltip-box">
+                                                    <div class="pop-title">Tứ Thế Tổ: Đức Thọ [trích dẫn: 36]</div>
+                                                    Con ngài Đức Quang, sinh Đức Thắng và Bá Tùi (mất sớm) [trích dẫn: 36].
+                                                </div>
+                                            </div>
+                                            <ul>
+                                                <!-- ĐỜI 5 -->
+                                                <li>
+                                                    <div class="node-wrapper">
+                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                            <div class="node-title">Ngũ Thế Tổ (Đời 5)</div>
+                                                            <div class="node-name">Đức Thắng</div>
+                                                        </div>
+                                                        <div class="tooltip-box">
+                                                            <div class="pop-title">Ngũ Thế Tổ: Đức Thắng [trích dẫn: 37]</div>
+                                                            Con ngài Đức Thọ, hiếu phụng tổ tiên, sinh Đức Mạnh và Đức Vẻ [trích dẫn: 37].
+                                                        </div>
+                                                    </div>
+                                                    <ul>
+                                                        <!-- ĐỜI 6 - ĐỨC MẠNH -->
+                                                        <li>
+                                                            <div class="node-wrapper">
+                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                    <div class="node-title">Lục Thế Tổ (Đời 6)</div>
+                                                                    <div class="node-name">Đức Mạnh</div>
+                                                                </div>
+                                                                <div class="tooltip-box">
+                                                                    <div class="pop-title">Lục Thế Tổ: Đức Mạnh [trích dẫn: 38]</div>
+                                                                    Phối bà Nguyễn Vĩnh Tân, sinh Đức Cương và 3 con gái [trích dẫn: 38]. Thọ 63 tuổi [trích dẫn: 38].
+                                                                </div>
+                                                            </div>
+                                                            <ul>
+                                                                <!-- ĐỜI 7 -->
+                                                                <li>
+                                                                    <div class="node-wrapper">
+                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                            <div class="node-title">Thất Thế Tổ (Đời 7)</div>
+                                                                            <div class="node-name">Đức Cường</div>
+                                                                        </div>
+                                                                        <div class="tooltip-box">
+                                                                            <div class="pop-title">Thất Thế Tổ: Đức Cường [trích dẫn: 40]</div>
+                                                                            Phối bà Phan Thị Đoán, sinh Đức Hoạch, Đức Do và 5 gái [trích dẫn: 40]. Thọ 67 tuổi [trích dẫn: 40].
+                                                                        </div>
+                                                                    </div>
+                                                                    <ul>
+                                                                        <!-- ĐỜI 8 - ĐỨC HOẠCH -->
+                                                                        <li>
+                                                                            <div class="node-wrapper">
+                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                    <div class="node-title">Bát Thế Tổ (Đời 8)</div>
+                                                                                    <div class="node-name">Đức Hoạch</div>
+                                                                                </div>
+                                                                                <div class="tooltip-box">
+                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Hoạch [trích dẫn: 41]</div>
+                                                                                    Phối bà Lê Thị Diễu, pháp danh Toàn Động, thọ 59 tuổi [trích dẫn: 41]. Sinh Đức Từ... [trích dẫn: 41]
+                                                                                </div>
+                                                                            </div>
+                                                                            <ul>
+                                                                                <!-- ĐỜI 9 -->
+                                                                                <li>
+                                                                                    <div class="node-wrapper">
+                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                            <div class="node-title">Cửu Thế Tổ (Đời 9)</div>
+                                                                                            <div class="node-name">Đức Từ</div>
+                                                                                        </div>
+                                                                                        <div class="tooltip-box">
+                                                                                            <div class="pop-title">Cửu Thế Tổ: Đức Từ [trích dẫn: 43]</div>
+                                                                                            Phối bà Thị Thuyên, sinh 6 trai (Đức Hoàn, Chu, Trương, Thung, Thông, Đạt) và 3 gái [trích dẫn: 43].
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <ul>
+                                                                                        <!-- ĐỜI 10 -->
+                                                                                        <li>
+                                                                                            <div class="node-wrapper">
+                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                    <div class="node-title">Thập Thế Tổ (Đời 10)</div>
+                                                                                                    <div class="node-name">Đức Thung</div>
+                                                                                                </div>
+                                                                                                <div class="tooltip-box">
+                                                                                                    <div class="pop-title">Thập Thế Tổ: Đức Thung [trích dẫn: 44]</div>
+                                                                                                    Phối bà Phan Thị và Trịnh Thị Thuận. Sinh 3 con trai: Đức Tuân, Đức Thục, Đức Mùi [trích dẫn: 44].
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <ul>
+                                                                                                <!-- ĐỜI 11 (3 ỐNG) -->
+                                                                                                <li>
+                                                                                                    <div class="node-wrapper">
+                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                            <div class="node-title">Đời 11</div>
+                                                                                                            <div class="node-name">Đức Tuân</div>
+                                                                                                        </div>
+                                                                                                        <div class="tooltip-box">
+                                                                                                            <div class="pop-title">Đời 11: Đức Tuân [trích dẫn: 45]</div>
+                                                                                                            Con trưởng ngài Đức Thung, phối người họ Trịnh và Trịnh Thị Quyên [trích dẫn: 45].
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    <div class="node-wrapper">
+                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                            <div class="node-title">Đời 11</div>
+                                                                                                            <div class="node-name">Đức Thục</div>
+                                                                                                        </div>
+                                                                                                        <div class="tooltip-box">
+                                                                                                            <div class="pop-title">Đời 11: Đức Thục [trích dẫn: 45]</div>
+                                                                                                            Con thứ nhì ngài Đức Thung, phối người họ Huỳnh và Trịnh Thị Mùa [trích dẫn: 45].
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    <!-- ĐỨC MÙI -->
+                                                                                                    <div class="node-wrapper">
+                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                            <div class="node-title">Đời 11</div>
+                                                                                                            <div class="node-name">Đức Mùi</div>
+                                                                                                        </div>
+                                                                                                        <div class="tooltip-box">
+                                                                                                            <div class="pop-title">Đời 11: Đức Mùi [trích dẫn: 46]</div>
+                                                                                                            Con út ngài Đức Thung, phối bà Lê Thị Nghĩa và Nguyễn Thị Đĩ [trích dẫn: 46]. Sinh ngài Đức Lư [trích dẫn: 46].
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <ul>
+                                                                                                        <!-- ĐỜI 12: ĐỨC LƯ -->
+                                                                                                        <li>
+                                                                                                            <div class="node-wrapper">
+                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                    <div class="node-title">Đời 12</div>
+                                                                                                                    <div class="node-name">Đức Lư</div>
+                                                                                                                </div>
+                                                                                                                <div class="tooltip-box">
+                                                                                                                    <div class="pop-title">Đời 12: Đức Lư [trích dẫn: 47]</div>
+                                                                                                                    Con ngài Đức Mùi, phối bà Lê Thị Thanh [trích dẫn: 47]. Sinh Đức Thỏa, Đức Đào, Đức Lý [trích dẫn: 47].
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <ul>
+                                                                                                                <!-- ĐỜI 13: 3 ÔNG -->
+                                                                                                                <li class="collapsible">
+                                                                                                                    <div class="node-wrapper">
+                                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                            <div class="node-title">Đời 13</div>
+                                                                                                                            <div class="node-name">Đức Thỏa <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
+                                                                                                                        </div>
+                                                                                                                        <div class="tooltip-box">
+                                                                                                                            <div class="pop-title">Đời 13: Đức Thỏa [trích dẫn: 48]</div>
+                                                                                                                            Con trưởng ngài Đức Lư, phối bà Phạm Thị Nhỏ, sinh Đức Sắc, Đức Đá [trích dẫn: 48].
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <ul>
+                                                                                                                        <!-- ĐỜI 14 CON ĐỨC THỎA -->
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Sắc</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Sắc [trích dẫn: 50]</div>
+                                                                                                                                    Phối bà Phan Thị Lý, sinh Đức Thạnh, Ngọc, Tùng, Vinh, Hiền... [trích dẫn: 50]
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Đá</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Đá [trích dẫn: 51]</div>
+                                                                                                                                    Phối bà Ngô Thị Mối, sinh Đức Tuần... [trích dẫn: 51]
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                    </ul>
+                                                                                                                </li>
+
+                                                                                                                <li class="collapsible">
+                                                                                                                    <div class="node-wrapper">
+                                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                            <div class="node-title">Đời 13</div>
+                                                                                                                            <div class="node-name">Đức Đào <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
+                                                                                                                        </div>
+                                                                                                                        <div class="tooltip-box">
+                                                                                                                            <div class="pop-title">Đời 13: Đức Đào [trích dẫn: 49]</div>
+                                                                                                                            Con thứ ngài Đức Lư, phối bà Huỳnh Thị Cái, sinh Đức Quáng, Đức Lèo [trích dẫn: 49].
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <ul>
+                                                                                                                        <!-- ĐỜI 14 CON ĐỨC ĐÀO -->
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Quáng</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Quáng [trích dẫn: 52]</div>
+                                                                                                                                    Phối bà Dương Thị Thuần, sinh Đức Hường, Học, Sơn... [trích dẫn: 52]
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Lèo</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Lèo [trích dẫn: 53]</div>
+                                                                                                                                    Phối bà Phan Thị Tó, sinh Đức Trường, Sản, Phú, Sang... [trích dẫn: 53]
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                    </ul>
+                                                                                                                </li>
+
+                                                                                                                <li class="collapsible">
+                                                                                                                    <div class="node-wrapper left-pop">
+                                                                                                                        <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                            <div class="node-title">Đời 13</div>
+                                                                                                                            <div class="node-name">Đức Lý <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
+                                                                                                                        </div>
+                                                                                                                        <div class="tooltip-box">
+                                                                                                                            <div class="pop-title">Đời 13: Đức Lý [trích dẫn: 49]</div>
+                                                                                                                            Con út ngài Đức Lư, phối bà Phạm Thị Thước, sinh Đức Thập, Quân, Phi, Phường [trích dẫn: 49].
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <ul>
+                                                                                                                        <!-- ĐỜI 14 CON ĐỨC LÝ -->
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper left-pop">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Thập</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Thập [trích dẫn: 54]</div>
+                                                                                                                                    Phối bà Phan Thị Hường, sinh Đức Rạng, Hùng... [trích dẫn: 54]
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper left-pop">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Quân</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Quân [trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper left-pop">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Phi (Bay)</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Phi [trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                        <li>
+                                                                                                                            <div class="node-wrapper left-pop">
+                                                                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                                                                    <div class="node-title">Đời 14</div>
+                                                                                                                                    <div class="node-name">Đức Phường</div>
+                                                                                                                                </div>
+                                                                                                                                <div class="tooltip-box">
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Phường [trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </li>
+                                                                                                                    </ul>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </li>
+                                                                        <!-- ĐỜI 8 - ĐỨC DO -->
+                                                                        <li>
+                                                                            <div class="node-wrapper left-pop">
+                                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                                    <div class="node-title">Bát Thế Tổ (Đời 8)</div>
+                                                                                    <div class="node-name">Đức Do</div>
+                                                                                </div>
+                                                                                <div class="tooltip-box">
+                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Do [trích dẫn: 41, 42]</div>
+                                                                                    Con ngài Đức Cường, em ngài Đức Hoạch, sinh Đức Đình, Quang, Thái (Anh Liệt Tướng Quân), Thường, Trừng... [trích dẫn: 41, 42]
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <!-- ĐỜI 6 - ĐỨC VẺ -->
+                                                        <li>
+                                                            <div class="node-wrapper left-pop">
+                                                                <div class="node-btn" onclick="togglePopup(this)">
+                                                                    <div class="node-title">Lục Thế Tổ (Đời 6)</div>
+                                                                    <div class="node-name">Đức Vẻ</div>
+                                                                </div>
+                                                                <div class="tooltip-box">
+                                                                    <div class="pop-title">Lục Thế Tổ: Đức Vẻ [trích dẫn: 39]</div>
+                                                                    Làm thuộc viện Phú Xuân, gặp gió to tử nạn trên biển, được vua truy tặng "Về Liệt Bá" [trích dẫn: 39].
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- ĐỜI 3 - PHÁI 2 -->
+                                <li>
+                                    <div class="node-wrapper left-pop">
+                                        <div class="node-btn" onclick="togglePopup(this)">
+                                            <div class="node-title">Tam Thế Tổ - Phái 2</div>
+                                            <div class="node-name">Đức Thuận</div>
+                                        </div>
+                                        <div class="tooltip-box">
+                                            <div class="pop-title">Tam Thế Tổ (Phái 2): Đức Thuận [trích dẫn: 35]</div>
+                                            Con thứ Nhị Thế Tổ, làm Lý phủ Thuần Khương Tử, khởi lập phái Nhì [trích dẫn: 33, 35].
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Bật/tắt popup thông tin chi tiết
+        function togglePopup(element) {
+            const wrapper = element.closest('.node-wrapper');
+            if (wrapper.classList.contains('active')) {
+                wrapper.classList.remove('active');
+            } else {
+                document.querySelectorAll('.node-wrapper').forEach(w => w.classList.remove('active'));
+                wrapper.classList.add('active');
+            }
+        }
+
+        // Đóng/mở thu gọn nhánh con
+        function toggleBranch(event, btn) {
+            event.stopPropagation();
+            const li = btn.closest('li.collapsible');
+            if (li.classList.contains('collapsed')) {
+                li.classList.remove('collapsed');
+                btn.innerText = '-';
+            } else {
+                li.classList.add('collapsed');
+                btn.innerText = '+';
+            }
+        }
+
+        // Đóng popup khi kích ra ngoài khoảng trống
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.node-wrapper') && !event.target.closest('.extra-bar')) {
+                document.querySelectorAll('.node-wrapper').forEach(w => w.classList.remove('active'));
+            }
+        });
+    </script>
+</body>
+</html>
