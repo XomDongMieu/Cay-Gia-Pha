@@ -8,7 +8,7 @@
             font-family: Arial, sans-serif;
             background-color: #f7f5ef;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             color: #333;
             display: flex;
             flex-direction: column;
@@ -16,66 +16,69 @@
         }
         h1 {
             color: #800000;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: center;
-            font-size: 26px;
+            font-size: 24px;
         }
 
         /* Thanh menu Lời tự & Diễn ca */
         .extra-bar {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             display: flex;
-            gap: 12px;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         .extra-btn {
             background: #fff;
             border: 2px solid #800000;
             color: #800000;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
         }
         .extra-btn:hover {
             background: #800000;
             color: #fff;
         }
 
-        /* Cấu trúc cây thư mục CSS Tree gọn nhẹ */
+        /* Khung hiển thị cây thư mục gọn gàng, chống tràn rộng */
         .tree-viewport {
             width: 100%;
             overflow-x: auto;
             display: flex;
             justify-content: center;
-            padding-bottom: 40px;
+            padding-bottom: 30px;
         }
 
         .tree {
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0 auto;
         }
 
         .tree ul {
-            padding-top: 15px; 
+            padding-top: 12px; 
             position: relative;
             transition: all 0.3s;
             display: flex;
             justify-content: center;
             list-style-type: none;
-            margin: 0;
+            margin: 0 auto;
             padding-left: 0;
         }
 
         .tree li {
             position: relative;
-            padding: 15px 4px 0 4px;
+            padding: 12px 1px 0 1px; /* Thu hẹp tối đa khoảng cách ngang giữa các nhánh */
             text-align: center;
             list-style-type: none;
         }
 
-        /* Đường nối cây thư mục */
+        /* Đường nối cây thư mục được thu ngắn lại */
         .tree li::before, .tree li::after {
             content: '';
             position: absolute;
@@ -83,7 +86,7 @@
             right: 50%;
             border-top: 2px solid #800000;
             width: 50%;
-            height: 15px;
+            height: 12px;
         }
         .tree li::after {
             right: auto;
@@ -102,10 +105,10 @@
         }
         .tree li:last-child::before {
             border-right: 2px solid #800000;
-            border-radius: 0 4px 0 0;
+            border-radius: 0 3px 0 0;
         }
         .tree li:first-child::after {
-            border-radius: 4px 0 0 0;
+            border-radius: 3px 0 0 0;
         }
 
         .tree ul ul::before {
@@ -115,10 +118,10 @@
             left: 50%;
             border-left: 2px solid #800000;
             width: 0;
-            height: 15px;
+            height: 12px;
         }
 
-        /* Khối hiển thị thông tin nút (Node) nhỏ gọn */
+        /* Khối hiển thị thông tin nút (Node) gọn nhẹ */
         .node-wrapper {
             position: relative;
             display: inline-block;
@@ -127,12 +130,12 @@
         .node-btn {
             background: #fff;
             border: 1.5px solid #800000;
-            border-radius: 6px;
-            padding: 6px 10px;
+            border-radius: 5px;
+            padding: 5px 8px;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            min-width: 110px;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.06);
+            min-width: 90px;
             transition: all 0.2s;
             display: inline-block;
         }
@@ -147,29 +150,29 @@
         }
 
         .node-title {
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: bold;
             color: #800000;
             text-transform: uppercase;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .node-name {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
         /* Nút thu gọn/mở rộng cành cây */
         .toggle-btn {
             display: inline-block;
-            width: 14px;
-            height: 14px;
-            line-height: 12px;
+            width: 12px;
+            height: 12px;
+            line-height: 10px;
             background: #800000;
             color: #fff;
             border-radius: 50%;
-            font-size: 10px;
-            margin-left: 4px;
+            font-size: 9px;
+            margin-left: 3px;
             cursor: pointer;
             vertical-align: middle;
         }
@@ -180,16 +183,16 @@
             position: absolute;
             top: -5px;
             left: 105%;
-            width: 260px;
+            width: 250px;
             background: #ffffff;
             border-radius: 6px;
-            padding: 10px 12px;
+            padding: 10px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
             z-index: 1000;
             border: 1px solid #ccc;
             text-align: left;
             color: #333;
-            font-size: 12px;
+            font-size: 11.5px;
             line-height: 1.4;
         }
 
@@ -204,7 +207,7 @@
 
         .pop-title {
             color: #800000;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: bold;
             border-bottom: 1px solid #eee;
             padding-bottom: 3px;
@@ -226,19 +229,19 @@
             <button class="extra-btn" onclick="togglePopup(this)">📜 Lời Tự Gia Phổ (1955)</button>
             <div class="tooltip-box">
                 <div class="pop-title">Lời Tự Gia Phổ (1955)</div>
-                <b>Ngày 1/1 Ất Mùi (1955):</b> Do cháu đời 13 là Đức Bính Ký (80 tuổi) tục biên từ bản chữ Hán thời Tây Sơn của ông Ba Minh Hầu sang Quốc văn [trích dẫn: 30].
+                <b>Ngày 1/1 Ất Mùi (1955):</b> Do cháu đời 13 là Đức Bính Ký (80 tuổi) tục biên từ bản chữ Hán thời Tây Sơn của ông Ba Minh Hầu sang Quốc văn [Trích dẫn: 30].
             </div>
         </div>
         <div class="node-wrapper">
             <button class="extra-btn" onclick="togglePopup(this)">🎵 Diễn Ca Lời Tự</button>
             <div class="tooltip-box">
                 <div class="pop-title">Diễn Ca Lời Tự</div>
-                Bài thơ ghi lại lịch sử dòng họ Nguyễn Đức tại Hoa Phong, nhắc nhở con cháu giữ gìn đạo hiếu [trích dẫn: 31].
+                Bài thơ ghi lại lịch sử dòng họ Nguyễn Đức tại Hoa Phong, nhắc nhở con cháu giữ gìn đạo hiếu [Trích dẫn: 31].
             </div>
         </div>
     </div>
 
-    <!-- Sơ đồ cây phả hệ thu gọn tinh giản -->
+    <!-- Sơ đồ cây phả hệ gọn gàng -->
     <div class="tree-viewport">
         <div class="tree">
             <ul>
@@ -250,9 +253,9 @@
                             <div class="node-name">Nguyễn Trang</div>
                         </div>
                         <div class="tooltip-box">
-                            <div class="pop-title">Thủy Tổ: Nguyễn Trang [trích dẫn: 32]</div>
-                            <b>Gia tiên:</b> Làng Hoa Phong, Lệ Dương, Thanh Hóa, sau vào Quảng Nam [trích dẫn: 32].<br>
-                            <b>Phối ngẫu:</b> Bà Thị Đại [trích dẫn: 32]. Mộ xứ Dương Thần [trích dẫn: 32].
+                            <div class="pop-title">Thủy Tổ: Nguyễn Trang [Trích dẫn: 32]</div>
+                            <b>Gia tiên:</b> Làng Hoa Phong, Lệ Dương, Thanh Hóa, sau vào Quảng Nam [Trích dẫn: 32].<br>
+                            <b>Phối ngẫu:</b> Bà Thị Đại [Trích dẫn: 32]. Mộ xứ Dương Thần [Trích dẫn: 32].
                         </div>
                     </div>
                     <ul>
@@ -264,8 +267,8 @@
                                     <div class="node-name">Chức Sanh Đả</div>
                                 </div>
                                 <div class="tooltip-box">
-                                    <div class="pop-title">Nhị Thế Tổ [trích dẫn: 33]</div>
-                                    Chức Sanh đả ở 4 phủ, sinh 2 con trai khởi đầu 2 phái [trích dẫn: 33]. Mộ tại xứ Dương Thần [trích dẫn: 33].
+                                    <div class="pop-title">Nhị Thế Tổ [Trích dẫn: 33]</div>
+                                    Chức Sanh đả ở 4 phủ, sinh 2 con trai khởi đầu 2 phái [Trích dẫn: 33]. Mộ tại xứ Dương Thần [Trích dẫn: 33].
                                 </div>
                             </div>
                             <ul>
@@ -277,8 +280,8 @@
                                             <div class="node-name">Đức Quang</div>
                                         </div>
                                         <div class="tooltip-box">
-                                            <div class="pop-title">Tam Thế Tổ (Phái 1): Đức Quang [trích dẫn: 34]</div>
-                                            Con lớn Nhị Thế Tổ, làm chức Sanh đỗ bến phủ, sinh ngài Đức Thọ [trích dẫn: 34].
+                                            <div class="pop-title">Tam Thế Tổ (Phái 1): Đức Quang [Trích dẫn: 34]</div>
+                                            Con lớn Nhị Thế Tổ, làm chức Sanh đỗ bến phủ, sinh ngài Đức Thọ [Trích dẫn: 34].
                                         </div>
                                     </div>
                                     <ul>
@@ -290,8 +293,8 @@
                                                     <div class="node-name">Đức Thọ</div>
                                                 </div>
                                                 <div class="tooltip-box">
-                                                    <div class="pop-title">Tứ Thế Tổ: Đức Thọ [trích dẫn: 36]</div>
-                                                    Con ngài Đức Quang, sinh Đức Thắng và Bá Tùi (mất sớm) [trích dẫn: 36].
+                                                    <div class="pop-title">Tứ Thế Tổ: Đức Thọ [Trích dẫn: 36]</div>
+                                                    Con ngài Đức Quang, sinh Đức Thắng và Bá Tùi (mất sớm) [Trích dẫn: 36].
                                                 </div>
                                             </div>
                                             <ul>
@@ -303,8 +306,8 @@
                                                             <div class="node-name">Đức Thắng</div>
                                                         </div>
                                                         <div class="tooltip-box">
-                                                            <div class="pop-title">Ngũ Thế Tổ: Đức Thắng [trích dẫn: 37]</div>
-                                                            Con ngài Đức Thọ, hiếu phụng tổ tiên, sinh Đức Mạnh và Đức Vẻ [trích dẫn: 37].
+                                                            <div class="pop-title">Ngũ Thế Tổ: Đức Thắng [Trích dẫn: 37]</div>
+                                                            Con ngài Đức Thọ, hiếu phụng tổ tiên, sinh Đức Mạnh và Đức Vẻ [Trích dẫn: 37].
                                                         </div>
                                                     </div>
                                                     <ul>
@@ -316,8 +319,8 @@
                                                                     <div class="node-name">Đức Mạnh</div>
                                                                 </div>
                                                                 <div class="tooltip-box">
-                                                                    <div class="pop-title">Lục Thế Tổ: Đức Mạnh [trích dẫn: 38]</div>
-                                                                    Phối bà Nguyễn Vĩnh Tân, sinh Đức Cương và 3 con gái [trích dẫn: 38]. Thọ 63 tuổi [trích dẫn: 38].
+                                                                    <div class="pop-title">Lục Thế Tổ: Đức Mạnh [Trích dẫn: 38]</div>
+                                                                    Phối bà Nguyễn Vĩnh Tân, sinh Đức Cương và 3 con gái [Trích dẫn: 38]. Thọ 63 tuổi [Trích dẫn: 38].
                                                                 </div>
                                                             </div>
                                                             <ul>
@@ -329,8 +332,8 @@
                                                                             <div class="node-name">Đức Cường</div>
                                                                         </div>
                                                                         <div class="tooltip-box">
-                                                                            <div class="pop-title">Thất Thế Tổ: Đức Cường [trích dẫn: 40]</div>
-                                                                            Phối bà Phan Thị Đoán, sinh Đức Hoạch, Đức Do và 5 gái [trích dẫn: 40]. Thọ 67 tuổi [trích dẫn: 40].
+                                                                            <div class="pop-title">Thất Thế Tổ: Đức Cường [Trích dẫn: 40]</div>
+                                                                            Phối bà Phan Thị Đoán, sinh Đức Hoạch, Đức Do và 5 gái [Trích dẫn: 40]. Thọ 67 tuổi [Trích dẫn: 40].
                                                                         </div>
                                                                     </div>
                                                                     <ul>
@@ -342,8 +345,8 @@
                                                                                     <div class="node-name">Đức Hoạch</div>
                                                                                 </div>
                                                                                 <div class="tooltip-box">
-                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Hoạch [trích dẫn: 41]</div>
-                                                                                    Phối bà Lê Thị Diễu, pháp danh Toàn Động, thọ 59 tuổi [trích dẫn: 41]. Sinh Đức Từ... [trích dẫn: 41]
+                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Hoạch [Trích dẫn: 41]</div>
+                                                                                    Phối bà Lê Thị Diễu, pháp danh Toàn Động, thọ 59 tuổi [Trích dẫn: 41]. Sinh Đức Từ... [Trích dẫn: 41]
                                                                                 </div>
                                                                             </div>
                                                                             <ul>
@@ -355,8 +358,8 @@
                                                                                             <div class="node-name">Đức Từ</div>
                                                                                         </div>
                                                                                         <div class="tooltip-box">
-                                                                                            <div class="pop-title">Cửu Thế Tổ: Đức Từ [trích dẫn: 43]</div>
-                                                                                            Phối bà Thị Thuyên, sinh 6 trai (Đức Hoàn, Chu, Trương, Thung, Thông, Đạt) và 3 gái [trích dẫn: 43].
+                                                                                            <div class="pop-title">Cửu Thế Tổ: Đức Từ [Trích dẫn: 43]</div>
+                                                                                            Phối bà Thị Thuyên, sinh 6 trai (Đức Hoàn, Chu, Trương, Thung, Thông, Đạt) và 3 gái [Trích dẫn: 43].
                                                                                         </div>
                                                                                     </div>
                                                                                     <ul>
@@ -368,12 +371,12 @@
                                                                                                     <div class="node-name">Đức Thung</div>
                                                                                                 </div>
                                                                                                 <div class="tooltip-box">
-                                                                                                    <div class="pop-title">Thập Thế Tổ: Đức Thung [trích dẫn: 44]</div>
-                                                                                                    Phối bà Phan Thị và Trịnh Thị Thuận. Sinh 3 con trai: Đức Tuân, Đức Thục, Đức Mùi [trích dẫn: 44].
+                                                                                                    <div class="pop-title">Thập Thế Tổ: Đức Thung [Trích dẫn: 44]</div>
+                                                                                                    Phối bà Phan Thị và Trịnh Thị Thuận. Sinh 3 con trai: Đức Tuân, Đức Thục, Đức Mùi [Trích dẫn: 44].
                                                                                                 </div>
                                                                                             </div>
                                                                                             <ul>
-                                                                                                <!-- ĐỜI 11 (3 ỐNG) -->
+                                                                                                <!-- ĐỜI 11 (3 ÔNG) -->
                                                                                                 <li>
                                                                                                     <div class="node-wrapper">
                                                                                                         <div class="node-btn" onclick="togglePopup(this)">
@@ -381,8 +384,8 @@
                                                                                                             <div class="node-name">Đức Tuân</div>
                                                                                                         </div>
                                                                                                         <div class="tooltip-box">
-                                                                                                            <div class="pop-title">Đời 11: Đức Tuân [trích dẫn: 45]</div>
-                                                                                                            Con trưởng ngài Đức Thung, phối người họ Trịnh và Trịnh Thị Quyên [trích dẫn: 45].
+                                                                                                            <div class="pop-title">Đời 11: Đức Tuân [Trích dẫn: 45]</div>
+                                                                                                            Con trưởng ngài Đức Thung, phối người họ Trịnh và Trịnh Thị Quyên [Trích dẫn: 45].
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </li>
@@ -393,8 +396,8 @@
                                                                                                             <div class="node-name">Đức Thục</div>
                                                                                                         </div>
                                                                                                         <div class="tooltip-box">
-                                                                                                            <div class="pop-title">Đời 11: Đức Thục [trích dẫn: 45]</div>
-                                                                                                            Con thứ nhì ngài Đức Thung, phối người họ Huỳnh và Trịnh Thị Mùa [trích dẫn: 45].
+                                                                                                            <div class="pop-title">Đời 11: Đức Thục [Trích dẫn: 45]</div>
+                                                                                                            Con thứ nhì ngài Đức Thung, phối người họ Huỳnh và Trịnh Thị Mùa [Trích dẫn: 45].
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </li>
@@ -406,8 +409,8 @@
                                                                                                             <div class="node-name">Đức Mùi</div>
                                                                                                         </div>
                                                                                                         <div class="tooltip-box">
-                                                                                                            <div class="pop-title">Đời 11: Đức Mùi [trích dẫn: 46]</div>
-                                                                                                            Con út ngài Đức Thung, phối bà Lê Thị Nghĩa và Nguyễn Thị Đĩ [trích dẫn: 46]. Sinh ngài Đức Lư [trích dẫn: 46].
+                                                                                                            <div class="pop-title">Đời 11: Đức Mùi [Trích dẫn: 46]</div>
+                                                                                                            Con út ngài Đức Thung, phối bà Lê Thị Nghĩa và Nguyễn Thị Đĩ [Trích dẫn: 46]. Sinh ngài Đức Lư [Trích dẫn: 46].
                                                                                                         </div>
                                                                                                     </div>
                                                                                                     <ul>
@@ -419,8 +422,8 @@
                                                                                                                     <div class="node-name">Đức Lư</div>
                                                                                                                 </div>
                                                                                                                 <div class="tooltip-box">
-                                                                                                                    <div class="pop-title">Đời 12: Đức Lư [trích dẫn: 47]</div>
-                                                                                                                    Con ngài Đức Mùi, phối bà Lê Thị Thanh [trích dẫn: 47]. Sinh Đức Thỏa, Đức Đào, Đức Lý [trích dẫn: 47].
+                                                                                                                    <div class="pop-title">Đời 12: Đức Lư [Trích dẫn: 47]</div>
+                                                                                                                    Con ngài Đức Mùi, phối bà Lê Thị Thanh [Trích dẫn: 47]. Sinh Đức Thỏa, Đức Đào, Đức Lý [Trích dẫn: 47].
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                             <ul>
@@ -432,8 +435,8 @@
                                                                                                                             <div class="node-name">Đức Thỏa <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
                                                                                                                         </div>
                                                                                                                         <div class="tooltip-box">
-                                                                                                                            <div class="pop-title">Đời 13: Đức Thỏa [trích dẫn: 48]</div>
-                                                                                                                            Con trưởng ngài Đức Lư, phối bà Phạm Thị Nhỏ, sinh Đức Sắc, Đức Đá [trích dẫn: 48].
+                                                                                                                            <div class="pop-title">Đời 13: Đức Thỏa [Trích dẫn: 48]</div>
+                                                                                                                            Con trưởng ngài Đức Lư, phối bà Phạm Thị Nhỏ, sinh Đức Sắc, Đức Đá [Trích dẫn: 48].
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                     <ul>
@@ -445,8 +448,8 @@
                                                                                                                                     <div class="node-name">Đức Sắc</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Sắc [trích dẫn: 50]</div>
-                                                                                                                                    Phối bà Phan Thị Lý, sinh Đức Thạnh, Ngọc, Tùng, Vinh, Hiền... [trích dẫn: 50]
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Sắc [Trích dẫn: 50]</div>
+                                                                                                                                    Phối bà Phan Thị Lý, sinh Đức Thạnh, Ngọc, Tùng, Vinh, Hiền... [Trích dẫn: 50]
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -457,8 +460,8 @@
                                                                                                                                     <div class="node-name">Đức Đá</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Đá [trích dẫn: 51]</div>
-                                                                                                                                    Phối bà Ngô Thị Mối, sinh Đức Tuần... [trích dẫn: 51]
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Đá [Trích dẫn: 51]</div>
+                                                                                                                                    Phối bà Ngô Thị Mối, sinh Đức Tuần... [Trích dẫn: 51]
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -472,8 +475,8 @@
                                                                                                                             <div class="node-name">Đức Đào <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
                                                                                                                         </div>
                                                                                                                         <div class="tooltip-box">
-                                                                                                                            <div class="pop-title">Đời 13: Đức Đào [trích dẫn: 49]</div>
-                                                                                                                            Con thứ ngài Đức Lư, phối bà Huỳnh Thị Cái, sinh Đức Quáng, Đức Lèo [trích dẫn: 49].
+                                                                                                                            <div class="pop-title">Đời 13: Đức Đào [Trích dẫn: 49]</div>
+                                                                                                                            Con thứ ngài Đức Lư, phối bà Huỳnh Thị Cái, sinh Đức Quáng, Đức Lèo [Trích dẫn: 49].
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                     <ul>
@@ -485,8 +488,8 @@
                                                                                                                                     <div class="node-name">Đức Quáng</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Quáng [trích dẫn: 52]</div>
-                                                                                                                                    Phối bà Dương Thị Thuần, sinh Đức Hường, Học, Sơn... [trích dẫn: 52]
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Quáng [Trích dẫn: 52]</div>
+                                                                                                                                    Phối bà Dương Thị Thuần, sinh Đức Hường, Học, Sơn... [Trích dẫn: 52]
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -497,8 +500,8 @@
                                                                                                                                     <div class="node-name">Đức Lèo</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Lèo [trích dẫn: 53]</div>
-                                                                                                                                    Phối bà Phan Thị Tó, sinh Đức Trường, Sản, Phú, Sang... [trích dẫn: 53]
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Lèo [Trích dẫn: 53]</div>
+                                                                                                                                    Phối bà Phan Thị Tó, sinh Đức Trường, Sản, Phú, Sang... [Trích dẫn: 53]
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -512,8 +515,8 @@
                                                                                                                             <div class="node-name">Đức Lý <span class="toggle-btn" onclick="toggleBranch(event, this)">-</span></div>
                                                                                                                         </div>
                                                                                                                         <div class="tooltip-box">
-                                                                                                                            <div class="pop-title">Đời 13: Đức Lý [trích dẫn: 49]</div>
-                                                                                                                            Con út ngài Đức Lư, phối bà Phạm Thị Thước, sinh Đức Thập, Quân, Phi, Phường [trích dẫn: 49].
+                                                                                                                            <div class="pop-title">Đời 13: Đức Lý [Trích dẫn: 49]</div>
+                                                                                                                            Con út ngài Đức Lư, phối bà Phạm Thị Thước, sinh Đức Thập, Quân, Phi, Phường [Trích dẫn: 49].
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                     <ul>
@@ -525,8 +528,8 @@
                                                                                                                                     <div class="node-name">Đức Thập</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Thập [trích dẫn: 54]</div>
-                                                                                                                                    Phối bà Phan Thị Hường, sinh Đức Rạng, Hùng... [trích dẫn: 54]
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Thập [Trích dẫn: 54]</div>
+                                                                                                                                    Phối bà Phan Thị Hường, sinh Đức Rạng, Hùng... [Trích dẫn: 54]
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -537,8 +540,8 @@
                                                                                                                                     <div class="node-name">Đức Quân</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Quân [trích dẫn: 49]</div>
-                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Quân [Trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [Trích dẫn: 49].
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -549,8 +552,8 @@
                                                                                                                                     <div class="node-name">Đức Phi (Bay)</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Phi [trích dẫn: 49]</div>
-                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Phi [Trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [Trích dẫn: 49].
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -561,8 +564,8 @@
                                                                                                                                     <div class="node-name">Đức Phường</div>
                                                                                                                                 </div>
                                                                                                                                 <div class="tooltip-box">
-                                                                                                                                    <div class="pop-title">Đời 14: Đức Phường [trích dẫn: 49]</div>
-                                                                                                                                    Con ngài Đức Lý, trưởng thành [trích dẫn: 49].
+                                                                                                                                    <div class="pop-title">Đời 14: Đức Phường [Trích dẫn: 49]</div>
+                                                                                                                                    Con ngài Đức Lý, trưởng thành [Trích dẫn: 49].
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         </li>
@@ -586,8 +589,8 @@
                                                                                     <div class="node-name">Đức Do</div>
                                                                                 </div>
                                                                                 <div class="tooltip-box">
-                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Do [trích dẫn: 41, 42]</div>
-                                                                                    Con ngài Đức Cường, em ngài Đức Hoạch, sinh Đức Đình, Quang, Thái (Anh Liệt Tướng Quân), Thường, Trừng... [trích dẫn: 41, 42]
+                                                                                    <div class="pop-title">Bát Thế Tổ: Đức Do [Trích dẫn: 41, 42]</div>
+                                                                                    Con ngài Đức Cường, em ngài Đức Hoạch, sinh Đức Đình, Quang, Thái (Anh Liệt Tướng Quân), Thường, Trừng... [Trích dẫn: 41, 42]
                                                                                 </div>
                                                                             </div>
                                                                         </li>
@@ -603,8 +606,8 @@
                                                                     <div class="node-name">Đức Vẻ</div>
                                                                 </div>
                                                                 <div class="tooltip-box">
-                                                                    <div class="pop-title">Lục Thế Tổ: Đức Vẻ [trích dẫn: 39]</div>
-                                                                    Làm thuộc viện Phú Xuân, gặp gió to tử nạn trên biển, được vua truy tặng "Về Liệt Bá" [trích dẫn: 39].
+                                                                    <div class="pop-title">Lục Thế Tổ: Đức Vẻ [Trích dẫn: 39]</div>
+                                                                    Làm thuộc viện Phú Xuân, gặp gió to tử nạn trên biển, được vua truy tặng "Về Liệt Bá" [Trích dẫn: 39].
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -622,8 +625,8 @@
                                             <div class="node-name">Đức Thuận</div>
                                         </div>
                                         <div class="tooltip-box">
-                                            <div class="pop-title">Tam Thế Tổ (Phái 2): Đức Thuận [trích dẫn: 35]</div>
-                                            Con thứ Nhị Thế Tổ, làm Lý phủ Thuần Khương Tử, khởi lập phái Nhì [trích dẫn: 33, 35].
+                                            <div class="pop-title">Tam Thế Tổ (Phái 2): Đức Thuận [Trích dẫn: 35]</div>
+                                            Con thứ Nhị Thế Tổ, làm Lý phủ Thuần Khương Tử, khởi lập phái Nhì [Trích dẫn: 33, 35].
                                         </div>
                                     </div>
                                 </li>
