@@ -54,6 +54,11 @@ h1{font-family:"Playfair Display","Noto Serif",Georgia,serif;font-weight:800;col
 @media(prefers-reduced-motion:reduce){.node-wrapper.active .tooltip-box{animation:none}}
 a.extra-btn{text-decoration:none;display:inline-block}
 .extra-btn.on{background:linear-gradient(var(--son2),var(--son));color:var(--vang2)}
+#view{position:relative;z-index:1;width:100%;max-width:1100px;margin:0 auto 30px;padding:16px;text-align:center;background:linear-gradient(var(--lua),var(--lua2));border:3px double var(--net);box-shadow:0 4px 14px rgba(59,35,20,.35)}
+#view[hidden]{display:none}
+#view img{max-width:100%;height:auto;display:block;margin:0 auto}
+#view p{margin:30px 10px;font-size:1.15rem;font-weight:700;color:var(--son)}
+body.inview .tree-viewport,body.inview #tool{display:none}
 </style>
 </head>
 <body>
@@ -95,15 +100,18 @@ a.extra-btn{text-decoration:none;display:inline-block}
 </header>
 
     <!-- Menu chính -->
-    <nav class="extra-bar" aria-label="Menu chính">
-        <a class="extra-btn on" href="index.html">🌳 Cây gia phả</a>
+    <nav class="extra-bar" id="mn" aria-label="Menu chính">
+        <button class="extra-btn" data-v="dong-ho" onclick="showView('dong-ho')">🏯 Dòng họ</button>
+        <button class="extra-btn on" data-v="cay" onclick="showView('')">🌳 Cây gia phả</button>
         <a class="extra-btn" href="https://heyzine.com/flip-book/1fcfee7fbe.html" target="_blank" rel="noopener">📖 Tóm tắt</a>
         <a class="extra-btn" href="https://www.youtube.com/watch?v=kdkxB0DDKEE" target="_blank" rel="noopener">🎬 Video</a>
         <a class="extra-btn" href="chi-tiet.html">📜 Chi tiết</a>
+        <button class="extra-btn" data-v="hinh-anh" onclick="showView('hinh-anh')">🖼️ Hình ảnh</button>
     </nav>
+    <section id="view" hidden></section>
 
     <!-- Menu Lời tự & Diễn ca -->
-    <div class="extra-bar">
+    <div class="extra-bar" id="tool">
         <div class="node-wrapper">
             <button class="extra-btn" onclick="togglePopup(this)">📜 Lời Tự Gia Phổ (1955)</button>
             <div class="tooltip-box">
@@ -548,6 +556,23 @@ a.extra-btn{text-decoration:none;display:inline-block}
                 document.querySelectorAll('.node-wrapper').forEach(w => w.classList.remove('active'));
             }
         });
+
+        // Menu: Dòng họ / Hình ảnh
+        var V={
+            'dong-ho':`<img src="Dong-Ho.png" alt="Dòng họ Nguyễn Đức" onerror="this.replaceWith(document.createTextNode('Chưa tìm thấy tệp Dong-Ho.png trong thư mục của trang.'))">`,
+            'hinh-anh':`<p>Quý vị thông cảm, hình ảnh đang cập nhật.</p>`
+        };
+        function showView(v) {
+            var el = document.getElementById('view'), on = !!(v && V[v]);
+            el.innerHTML = on ? V[v] : '';
+            el.hidden = !on;
+            document.body.classList.toggle('inview', on);
+            document.querySelectorAll('#mn [data-v]').forEach(function (b) {
+                b.classList.toggle('on', b.dataset.v === (on ? v : 'cay'));
+            });
+            history.replaceState(null, '', on ? '#' + v : location.pathname + location.search);
+        }
+        showView(location.hash.slice(1));
     </script>
 </body>
 </html>
