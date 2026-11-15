@@ -888,29 +888,36 @@ body.inview .tree-viewport,body.inview #tool{display:none}
   <button onclick="sendChat()" style="padding:6px 10px;background:#2e7d32;color:white;border:none;border-radius:5px">Gửi</button>
 </div>
 <script>
-async function sendChat(){
-  const q=document.getElementById('chatinput').value;
-  if(!q) return;
- const log = document.getElementById('chatlog');
-log.innerHTML += `<div><b>Bạn:</b> ${q}</div>`;
-document.getElementById('chatinput').value = '';
-log.innerHTML += `<div id="loading">Đang nghĩ...</div>`;
-try {
-  const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question: q })
-  });
-  const data = await res.json();
-  document.getElementById('loading')?.remove();
-  // Thêm style này để nó xuống dòng đẹp + chữ to cho người lớn tuổi
-  log.innerHTML += `<div style="white-space: pre-line; font-size: 18px; line-height: 1.8; margin-top: 8px;"><b>Gia phả:</b><br>${data.answer}</div>`;
+async function sendChat() {
+  const input = document.getElementById('chatinput');
+  const q = input.value.trim();
+  if (!q) return;
+
+  const log = document.getElementById('chatlog');
+  log.innerHTML += `<div><b>Bạn:</b> ${q}</div>`;
+  input.value = '';
+  input.disabled = true;
+
+  const loadingId = 'loading-' + Date.now();
+  log.innerHTML += `<div id="${loadingId}">Đang nghĩ...</div>`;
   log.scrollTop = log.scrollHeight;
-} catch (e) {
-  document.getElementById('loading')?.remove();
-  log.innerHTML += `<div style="color:red;"><b>Gia phả:</b> Lỗi kết nối Worker, bạn thử lại. Lỗi: ${e.message}</div>`;
-} 
-  }catch(e){ document.getElementById('loading').remove(); log.innerHTML+=`<div>Lỗi kết nối</div>`; }
+
+  try {
+    const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q })
+    });
+    const data = await res.json();
+    document.getElementById(loadingId)?.remove();
+    log.innerHTML += `<div style="white-space: pre-line; font-size: 18px; line-height: 1.8; margin-top: 8px;"><b>Gia phả:</b><br>${data.answer || 'Không có câu trả lời'}</div>`;
+  } catch (e) {
+    document.getElementById(loadingId)?.remove();
+    log.innerHTML += `<div style="color:red;"><b>Gia phả:</b> Lỗi kết nối: ${e.message}</div>`;
+  }
+  input.disabled = false;
+  input.focus();
+  log.scrollTop = log.scrollHeight;
 }
 </script>
 </body>
