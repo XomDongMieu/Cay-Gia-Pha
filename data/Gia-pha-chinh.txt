@@ -1,0 +1,21 @@
+GIA PHẢ HỌ NGUYỄN ĐỨC - XÓM ĐỒNG MIẾU - PHONG NHỊ - AN THẮNG - ĐÀ NẴNG
+
+Đời 1: Thủy Tổ Nguyễn Trang. Gia tiên ở Làng Hoa Phong, huyện Lệ Dương, lộ Thanh Hóa.
+Đời 2: Nhị Thế Tổ. Không rõ tên, con Thủy Tổ.
+Đời 3: Đức Quang (con lớn, Phái 1). Đức Thuần (con thứ, Phái 2, em Đức Quang).
+Đời 4: Đức Thọ. Con ngài Đức Quang.
+Đời 5: Đức Thắng. Con thứ hai ngài Đức Thọ.
+Đời 6: Đức Mạnh (con lớn). Đức Võ / Đức Vở / Đức Vồ (em Đức Mạnh).
+Đời 7: Đức Cường. Pháp danh: Tiến Nhân / Tiên Nhẫn. Con lớn ngài Đức Mạnh.
+Đời 8: Đức Hoạch (Chi 1). Đức Do (Chi 2, em Đức Hoạch).
+Đời 9: Đức Từ. Con trưởng ngài Đức Hoạch.
+Đời 10: Đức Thung. Tên húy: Đức Kinh. Con thứ 4 ngài Đức Từ.
+Đời 11: Đức Tuân (trưởng). Đức Thục (thứ). Đức Mùi / Đức Nhì (út). Cả 3 đều là con ngài Đức Thung.
+Đời 12: Đức Lự. Con ngài Đức Mùi.
+Đời 13: Đức Thỏa (trưởng). Đức Đào (thứ, tên tự Đều). Đức Lý (út, tên tự Đức Thường). Cả 3 đều là con ngài Đức Lự.
+Đời 14: Đức Sắc, Đức Đá (con Đức Thỏa). Đức Quảng, Đức Lèo (con Đức Đào). Đức Tháp, Đức Quân, Đức Bay, Đức Phường (con Đức Lý).
+
+QUY TẮC TRA CỨU:
+- Khi hỏi "Đức Do là đời thứ mấy" thì trả lời: Đức Do là Đời 8, Chi 2, em của Đức Hoạch.
+- Khi hỏi "Đời 8 là ai" thì trả lời: Đức Hoạch và Đức Do.
+- Không được trả lời "chưa có trong dữ liệu" nếu tên đã có ở trên.
