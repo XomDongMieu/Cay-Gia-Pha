@@ -1048,7 +1048,7 @@ async function guiHoi(){
   box.innerHTML += `<div id="dang-goi">Gia phả: Đang trả lời...</div>`;
   box.scrollTop = box.scrollHeight;
   try{
-    const res = await fetch('https://ten-worker-cua-ban.workers.dev', {
+    const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({question: q})
