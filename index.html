@@ -1043,10 +1043,28 @@ body.inview .tree-viewport,body.inview #tool{display:none}
   </div>
 </div>
 
-<script>
+<script>// HÀM HIỂU GÕ KHÔNG DẤU: Doi 11 = Đời 11, Duc Thai = Đức Thái
+function boDau(str) {
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+}
+function doiCauKhongDauThanhCoDau(q) {
+  let q0 = boDau(q);
+  // Doi 11 -> đời 11 có những ai
+  if (q0.match(/^doi\s*\d+/)) {
+    let so = q0.match(/\d+(\.\d+)?/)[0];
+    return "đời " + so + " có những ai";
+  }
+  // Duc thai la ai -> đức thái là ai
+  if (q0.includes("duc thai")) return "đức thái là ai";
+  if (q0.includes("duc do")) return "đức do là ai";
+  if (q0.includes("con cua duc do")) return "con của đức do là ai";
+  return q;
+}
 async function guiHoi(){
+
   const input = document.getElementById('chat-input');
-  const q = input.value.trim();
+  let q = input.value.trim();
+q = doiCauKhongDauThanhCoDau(q);
   if(!q) return;
   const box = document.getElementById('chat-messages');
   box.innerHTML += `<div><b>Bạn:</b> ${q}</div>`;
