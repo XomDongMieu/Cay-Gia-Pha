@@ -1028,7 +1028,13 @@ body.inview .tree-viewport,body.inview #tool{display:none}
     </script>
 	<!-- CHATBOT GIA PHA - ĐỪNG XÓA ĐOẠN NÀY -->
 	<button id="nut-mo-chat" onclick="moChat()" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9999; width:55px; height:55px; border-radius:50%; border:none; background:#1a5c2a; color:white; font-size:24px; cursor:pointer;">💬</button>
-<div id="chat-box" style="position:fixed; bottom:20px; right:20px; width:320px; background:#fff; border:1px solid #ccc; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999;">
+<div style="background:#1a5c2a; color:white; padding:12px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+  <div style="font-weight:bold;">Gia phả: Hỏi đáp họ Nguyễn Đức</div>
+  <div style="display:flex; gap:6px;">
+    <button type="button" onclick="thuNhoChat()" title="Thu nhỏ" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:18px; cursor:pointer;">−</button>
+    <button type="button" onclick="tatChat()" title="Tắt" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">✕</button>
+  </div>
+</div>
   <div style="background:#1a5c2a; color:white; padding:12px; display:flex; align-items:center; justify-content:space-between;">
   <div style="font-weight:bold;">Gia phả: Hỏi đáp họ Nguyễn Đức</div>
   <div style="display:flex; gap:6px;">
