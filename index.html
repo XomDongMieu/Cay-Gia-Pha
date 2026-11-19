@@ -1035,14 +1035,7 @@ body.inview .tree-viewport,body.inview #tool{display:none}
     <button type="button" onclick="tatChat()" title="Tắt" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">✕</button>
   </div>
 </div>
-  <div style="background:#1a5c2a; color:white; padding:12px; display:flex; align-items:center; justify-content:space-between;">
-  <div style="font-weight:bold;">Gia phả: Hỏi đáp họ Nguyễn Đức</div>
-  <div style="display:flex; gap:6px;">
-  <button type="button" onclick="thuNhoChat()" title="Thu nhỏ" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:18px; cursor:pointer;">−</button>
-<button type="button" onclick="tatChat()" title="Tắt" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">✕</button>
-    tle="Tắt" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">✕</button>
   </div>
-</div>
   <div id="chat-messages" style="height:280px; overflow-y:auto; padding:10px; font-size:14px;"></div>
   <div style="display:flex; padding:8px; border-top:1px solid #eee;">
     <input id="chat-input" type="text" placeholder="Hỏi: Đức Do đời thứ mấy?" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:8px;">
@@ -1073,13 +1066,34 @@ async function guiHoi(){
   }catch(e){
     document.getElementById('dang-goi').innerHTML = 'Lỗi kết nối, thử lại sau!';
   }
-}
-document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') guiHoi(); });
+  document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') guiHoi(); });
 <script>
-  function thuNhoChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; } function tatChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; } function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
-  }
-</script>
+  function thuNhoChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+  function tatChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+  function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
 </script>
 <!-- HẾT CHATBOT -->
+<button type="button" id="nut-mo-chat" onclick="moChat()" style="display:none; position:fixed; bottom:20px; right:20px; z-index:10000; width:55px; height:55px; border-radius:50%; border:none; background:#1a5c2a; color:white; font-size:24px; cursor:pointer;">💬</button>
+
+<div id="chat-box" style="position:fixed; bottom:20px; right:20px; width:320px; background:#fff; border:1px solid #ccc; border-radius:12px; overflow:hidden; z-index:9999; display:block; box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+  <div style="background:#1a5c2a; color:white; padding:12px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+    <div style="font-weight:bold;">Gia phả: Hỏi đáp họ Nguyễn Đức</div>
+    <div style="display:flex; gap:6px;">
+      <button type="button" onclick="thuNhoChat()" title="Thu nhỏ" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:18px; cursor:pointer;">−</button>
+      <button type="button" onclick="tatChat()" title="Tắt" style="width:28px; height:28px; border:none; border-radius:50%; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">✕</button>
+    </div>
+  </div>
+  <div id="chat-messages" style="height:280px; overflow-y:auto; padding:10px; background:#fff;"></div>
+  <div style="display:flex; padding:10px; border-top:1px solid #eee; background:#fff;">
+    <input id="chat-input" type="text" placeholder="Hỏi về gia phả..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:8px;" />
+    <button type="button" onclick="guiHoi()" style="margin-left:6px; background:#1a5c2a; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Gửi</button>
+  </div>
+</div>
+
+<script>
+  function thuNhoChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+  function tatChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+  function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
+</script>
 </body>
 </html>
