@@ -1078,7 +1078,9 @@ async function guiHoi(){
   let q = input.value.trim();
   if(!q) return;
   let qThap = q.toLowerCase();
-  let m = qThap.match(/doi.*?(\d+)/);
+  let m = null;
+if(qThap.includes('thu')){ m = qThap.match(/(\d+)/); }
+else if(qThap.includes('doi') || qThap.includes('dow') || qThap.includes('ddow')){ m = qThap.match(/(\d+)/); }
   if(m){ q = 'Đời ' + m[1] + ' có những ai?'; }
   else { q = doiCauKhongDauThanhCoDau(q); }
   const box = document.getElementById('chat-messages');
