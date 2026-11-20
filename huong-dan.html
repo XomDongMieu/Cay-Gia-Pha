@@ -1,0 +1,11 @@
+<button onclick="dongHuongDan()" style="position:absolute; top:8px; right:10px; border:none; background:none; font-size:22px; cursor:pointer;">×</button>
+<h3 style="margin-top:0; color:#0d6efd;">📖 Hướng dẫn hỏi Chatbot</h3>
+<p><b>Nguyên tắc:</b> Hỏi phải có đủ Tên + Muốn hỏi gì. Ví dụ: <b>Đức Thái là ai?</b></p>
+<p><b>✅ Hỏi ĐÚNG:</b></p>
+<p>- Đức Thái là ai?<br>- Cha của Đức Thung là ai?<br>- Con của Đức Do là ai?<br>- Đời 11 có những ai?</p>
+<p><b>❌ Hỏi SAI:</b></p>
+<p>- Thái là ai? (thiếu chữ Đức)<br>- Đức (hỏi chung chung quá)<br>- Đời 11 (thiếu chữ có những ai)</p>
+<p><b>💡 Gõ không dấu cũng được:</b><br>Doi 11 = Đời 11<br>duc thai la ai = Đức Thái là ai</p>
+<p><b>⚠️ Nếu nó báo "Chưa hợp lý":</b> Là do hỏi quá ngắn, hãy hỏi dài ra: <i>Doi 11 co nhung ai?</i></p>
+<p><b>⚠️ Nếu nó báo "Con: Chưa rõ":</b> Là do trong Sổ gia phả chưa ghi con, không phải lỗi web!</p>
+<button onclick="dongHuongDan()" style="width:100%; background:#0d6efd; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Đã hiểu, bắt đầu hỏi</button>
