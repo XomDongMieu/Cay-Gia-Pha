@@ -1039,7 +1039,10 @@ body.inview .tree-viewport,body.inview #tool{display:none}
   <div id="chat-messages" style="height:280px; overflow-y:auto; padding:10px; background:#fff;"></div>
   <div style="display:flex; padding:10px; border-top:1px solid #eee; background:#fff;">
     <input id="chat-input" type="text" placeholder="Hỏi về gia phả..." style="flex:1; padding:8px; border:1px solid #ccc; border-radius:8px;" />
-    <button type="button" onclick="guiHoi()" style="margin-left:6px; background:#1a5c2a; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Gửi</button>
+   
+	<button type="button" onclick="guiHoi()" style="margin-left:6px; background:#1a5c2a; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Gửi</button>
+<button type="button" onclick="moHuongDan()" style="margin-left:6px; background:#ffc107; color:#000; border:none; width:36px; height:36px; border-radius:50%; font-weight:bold; font-size:18px; cursor:pointer;flex-shrink:0;" title="Hướng dẫn sử dụng">?</button>
+</div>
   </div>
 </div>
 
@@ -1112,6 +1115,24 @@ function shareGiaPha() {
     });
   }
 }
+</script>
+<!-- BẢNG HƯỚNG DẪN - Lấy từ file huong-dan.html -->
+<div id="bang-huong-dan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
+  <div id="noi-dung-huong-dan" style="background:white; width:92%; max-width:520px; max-height:85%; overflow-y:auto; border-radius:12px; padding:18px; position:relative;">
+    Đang tải hướng dẫn...
+  </div>
+</div>
+<script>
+function moHuongDan(){
+  document.getElementById('bang-huong-dan').style.display='flex';
+  if(!window.daTaiHuongDan){
+    fetch('huong-dan.html').then(r=>r.text()).then(t=>{
+      document.getElementById('noi-dung-huong-dan').innerHTML = t;
+      window.daTaiHuongDan = true;
+    });
+  }
+}
+function dongHuongDan(){ document.getElementById('bang-huong-dan').style.display='none'; }
 </script>
 </body>
 </html>
