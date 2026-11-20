@@ -1063,23 +1063,36 @@ function doiCauKhongDauThanhCoDau(q) {
   if (q0.includes("con cua duc do")) return "con của đức do là ai";
   return q;
 }
-async function guiHoi(){
 
+function thuNhoChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+function tatChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
+function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
+</script>
+<!-- HẾT CHATBOT --><!-- NÚT CHIA SẺ CHO CẢ HỌ -->
+<button onclick="shareGiaPha()" style="position:fixed; top:10px; right:10px; background:#0d6efd; color:white; border:none; padding:8px 12px; border-radius:50px; font-size:14px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999; cursor:pointer;">
+  📤 Chia sẻ
+</button>
+async function guiHoi(){
   const input = document.getElementById('chat-input');
   let q = input.value.trim();
-q = doiCauKhongDauThanhCoDau(q);
   if(!q) return;
+
+  // SỬA LỖI: Ưu tiên Đời trước, đừng để nó đoán dấu sai thành Đức Do
+  let qThap = q.toLowerCase();
+  let matchDoi2 = qThap.match(/doi.*?(\d+)/);
+  if(matchDoi2){
+    q = `Đời ${matchDoi2[1]} có những ai?`;
+  } else {
+    q = doiCauKhongDauThanhCoDau(q);
+  }
+
   const box = document.getElementById('chat-messages');
   box.innerHTML += `<div><b>Bạn:</b> ${q}</div>`;
   input.value = '';
   box.innerHTML += `<div id="dang-goi">Gia phả: Đang trả lời...</div>`;
   box.scrollTop = box.scrollHeight;
   try{
-    const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({question: q})
-    });
+    const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question: q}) });
     const data = await res.json();
     const el = document.getElementById('dang-goi');
     if(el) el.remove();
@@ -1091,15 +1104,6 @@ q = doiCauKhongDauThanhCoDau(q);
   }
 }
 document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') guiHoi(); });
-function thuNhoChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
-function tatChat() { document.getElementById('chat-box').style.display = 'none'; document.getElementById('nut-mo-chat').style.display = 'block'; }
-function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
-</script>
-<!-- HẾT CHATBOT --><!-- NÚT CHIA SẺ CHO CẢ HỌ -->
-<button onclick="shareGiaPha()" style="position:fixed; top:10px; right:10px; background:#0d6efd; color:white; border:none; padding:8px 12px; border-radius:50px; font-size:14px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999; cursor:pointer;">
-  📤 Chia sẻ
-</button>
-
 <script>
 function shareGiaPha() {
   const link = "https://xomdongmieu.github.io/Cay-Gia-Pha/";
