@@ -1072,31 +1072,26 @@ function moChat() { document.getElementById('chat-box').style.display = 'block';
 <button onclick="shareGiaPha()" style="position:fixed; top:10px; right:10px; background:#0d6efd; color:white; border:none; padding:8px 12px; border-radius:50px; font-size:14px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999; cursor:pointer;">
   📤 Chia sẻ
 </button>
+<script>
 async function guiHoi(){
   const input = document.getElementById('chat-input');
   let q = input.value.trim();
   if(!q) return;
-
-  // SỬA LỖI: Ưu tiên Đời trước, đừng để nó đoán dấu sai thành Đức Do
   let qThap = q.toLowerCase();
-  let matchDoi2 = qThap.match(/doi.*?(\d+)/);
-  if(matchDoi2){
-    q = `Đời ${matchDoi2[1]} có những ai?`;
-  } else {
-    q = doiCauKhongDauThanhCoDau(q);
-  }
-
+  let m = qThap.match(/doi.*?(\d+)/);
+  if(m){ q = 'Đời ' + m[1] + ' có những ai?'; }
+  else { q = doiCauKhongDauThanhCoDau(q); }
   const box = document.getElementById('chat-messages');
-  box.innerHTML += `<div><b>Bạn:</b> ${q}</div>`;
+  box.innerHTML += '<div><b>Bạn:</b> ' + q + '</div>';
   input.value = '';
-  box.innerHTML += `<div id="dang-goi">Gia phả: Đang trả lời...</div>`;
+  box.innerHTML += '<div id="dang-goi">Gia phả: Đang trả lời...</div>';
   box.scrollTop = box.scrollHeight;
   try{
     const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question: q}) });
     const data = await res.json();
     const el = document.getElementById('dang-goi');
     if(el) el.remove();
-    box.innerHTML += `<div><b>Gia phả:</b> ${data.answer || 'Mình chưa tìm thấy câu trả lời, bạn hỏi rõ hơn giúp mình nhé!'}</div>`;
+    box.innerHTML += '<div><b>Gia phả:</b> ' + (data.answer || 'Mình chưa tìm thấy câu trả lời, bạn hỏi rõ hơn giúp mình nhé!') + '</div>';
     box.scrollTop = box.scrollHeight;
   }catch(e){
     const el = document.getElementById('dang-goi');
@@ -1104,7 +1099,9 @@ async function guiHoi(){
   }
 }
 document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') guiHoi(); });
-<script>
+</script>
+<button type="button" id="nut-mo-chat" onclick="moChat()" ...>💬</button>
+
 function shareGiaPha() {
   const link = "https://xomdongmieu.github.io/Cay-Gia-Pha/";
   const text = "Gia phả Xóm Đông Miếu - Bấm vào để xem cây gia phả nhà mình nè: ";
