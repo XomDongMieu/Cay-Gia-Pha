@@ -123,6 +123,41 @@ body.inview #tsb{display:none!important}
 #view img{max-width:100%;height:auto;display:block;margin:0 auto}
 #view p{margin:30px 10px;font-size:1.15rem;font-weight:700;color:var(--son)}
 body.inview .tree-viewport,body.inview #tool{display:none}
+/* SỬA CHO ĐIỆN THOẠI NHỎ - SAMSUNG A30 */
+@media (max-width: 600px){
+  #chat-box, #chatbot, .chat-box{
+    width: 92vw !important;
+    max-width: 92vw !important;
+    right: 4vw !important;
+    left: auto !important;
+    bottom: 10px !important;
+    max-height: 75vh !important;
+  }
+  #chat-input, #chat-messages + div, .chat-input-row{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+  }
+  #chat-input{
+    flex: 1 !important;
+    width: auto !
+important;
+    min-width: 0 !important;
+    font-size: 16px !important;
+  }
+  #chat-send, #btn-gui, button[onclick*="guiHoi"]{
+    flex-shrink: 0 !important;
+    width: 55px !important;
+    min-width: 55px !important;
+    padding: 8px 0 !important;
+    font-size: 14px !important;
+  }
+  #chat-help, button[onclick*="help"]{
+    flex-shrink: 0 !important;
+    width: 38px !important;
+    min-width: 38px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1069,9 +1104,7 @@ function tatChat() { document.getElementById('chat-box').style.display = 'none';
 function moChat() { document.getElementById('chat-box').style.display = 'block'; document.getElementById('nut-mo-chat').style.display = 'none'; }
 </script>
 <!-- HẾT CHATBOT --><!-- NÚT CHIA SẺ CHO CẢ HỌ -->
-<button onclick="shareGiaPha()" style="position:fixed; top:10px; right:10px; background:#0d6efd; color:white; border:none; padding:8px 12px; border-radius:50px; font-size:14px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999; cursor:pointer;">
-  📤 Chia sẻ
-</button>
+<button onclick="chiaSeGiaPha()" style="background:#1e88e5;color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:bold;">📤 Chia sẻ</button></button>
 <script>
 async function guiHoi(){
   const input = document.getElementById('chat-input');
@@ -1145,6 +1178,19 @@ function moHuongDan(){
   }
 }
 function dongHuongDan(){ document.getElementById('bang-huong-dan').style.display='none'; }
+</script>
+<script>
+function chiaSeGiaPha(){
+  var link = 'https://xomdongmieu.github.io/Cay-Gia-Pha/';
+  var text = 'Gia phả họ Nguyễn Đức - Kính mời bà con vào xem và góp ý ạ! ';
+  if(navigator.share){
+    navigator.share({title:'Gia phả họ Nguyễn Đức', text:text, url:link}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text + link).then(()=>{
+      alert('Đã copy link! Bạn dán vào Zalo để gửi cho bà con nhé!');
+    });
+  }
+}
 </script>
 </body>
 </html>
