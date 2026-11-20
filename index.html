@@ -1077,6 +1077,15 @@ async function guiHoi(){
   const input = document.getElementById('chat-input');
   let q = input.value.trim();
   if(!q) return;
+  let qThap2 = q.toLowerCase().trim();
+if(qThap2 === 'hi' || qThap2 === 'hello' || qThap2 === 'xin chao' || qThap2 === 'xin chào'){
+  const box2 = document.getElementById('chat-messages');
+  box2.innerHTML += '<div><b>Bạn:</b> ' + q + '</div>';
+  box2.innerHTML += '<div><b>Gia phả:</b> Xin chào, bạn cần thông tin gì ạ?</div>';
+  input.value = '';
+  box2.scrollTop = box2.scrollHeight;
+  return;
+}
   let qThap = q.toLowerCase();
   let m = null;
 if(qThap.includes('thu')){ m = qThap.match(/(\d+)/); }
