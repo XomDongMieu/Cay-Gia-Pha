@@ -1243,7 +1243,7 @@ async function guiHoi(){
     if(ds.length===0) traLoi = 'Đời ' + soDoi + ' chưa có dữ liệu!';
   }
   // 2) Đời 11 có những ai? - ĐÃ SỬA LỖI CHỮ Đ
-  else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai'))){
+  else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai') || tu.includes('con') || tu.includes('la ai')) && !tu.includes('cha cua') && !tu.includes('con cua')){
     var m = tu.match(/doi\s*(\d+)/);
     var soDoi2 = m ? m[1] : '';
     var ds2 = tatCa.filter(n => String(n.doi) === soDoi2);
