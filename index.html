@@ -1243,6 +1243,24 @@ async function guiHoi(){
     if(ds.length===0) traLoi = 'Đời ' + soDoi + ' chưa có dữ liệu!';
   }
   // 2) Đời 11 có những ai? - ĐÃ SỬA LỖI CHỮ Đ
+    // Đời 9 có con ai? -> Hiện CON của Đời 9 (Hậu duệ), không phải liệt kê Đời 9
+  else if(tu.includes('doi') && (tu.includes('co con') || tu.includes('con ai') || tu.includes('con cua doi'))){
+    var mCon = tu.match(/doi\s*(\d+)/);
+    var soDoiCon = mCon ? mCon[1] : '';
+    var dsCha = tatCa.filter(n => String(n.doi) === soDoiCon);
+    traLoi = '👨‍👧‍👦 <b>Con của Đời ' + soDoiCon + ':</b><br><br>';
+    dsCha.forEach(n => {
+      var hauDue = '';
+      for(var k in n.thongtin){ if(chuanHoa(k).includes('hau due')) hauDue = n.thongtin[k]; }
+      traLoi += '• <b>' + n.ten + '</b> có con: ' + (hauDue || 'Chưa có thông tin') + '<br>';
+    });
+    // Gợi ý thêm: Con của Đời 9 chính là Đời 10
+    var doiSau = parseInt(soDoiCon) + 1;
+    var dsSau = tatCa.filter(n => String(n.doi) === String(doiSau));
+    if(dsSau.length>0){
+      traLoi += '<br>📜 <b>=> Chính là Đời ' + doiSau + ' có ' + dsSau.length + ' người:</b><br>' + dsSau.map(n => '• ' + n.ten).join('<br>');
+    }
+  }
   else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai') || tu.includes('con') || tu.includes('la ai')) && !tu.includes('cha cua') && !tu.includes('con cua')){
     var m = tu.match(/doi\s*(\d+)/);
     var soDoi2 = m ? m[1] : '';
