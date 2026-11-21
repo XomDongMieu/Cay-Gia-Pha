@@ -1153,34 +1153,17 @@ function moChat() { document.getElementById('chat-box').style.display = 'block';
 <button onclick="chiaSeGiaPha()" style="background:#1e88e5;color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:bold;">📤 Chia sẻ</button></button>
 <script>
 var SHEET_ID_GIA_PHA = "1rAF9A6Evj0BIa_GcdBs9vrV13-v4gepQNreJnNkmKU4";
-
-// Hàm hiểu gõ không dấu: doi11, doi 11, Doi 11 đều hiểu là Doi11
-function chuanHoa(txt){
-  txt = txt.toLowerCase().trim();
-  txt = txt.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // bỏ dấu
-  txt = txt.replace(/\s+/g, ''); // bỏ khoảng trắng: "doi 11" -> "doi11"
-  return txt;
-}
-var SHEET_ID_GIA_PHA = "1rAF9A6Evj0BIa_GcdBs9vrV13-v4gepQNreJnNkmKU4";
+var CACHE_TAT_CA = null;
 
 function chuanHoa(txt){
   txt = txt.toLowerCase().trim();
   txt = txt.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  txt = txt.replace(/\s+/g, '');
-  return txt;
-}
-var SHEET_ID_GIA_PHA = "1rAF9A6Evj0BIa_GcdBs9vrV13-v4gepQNreJnNkmKU4";
-var CACHE_TAT_CA = null; // lưu tất cả dữ liệu để tìm nhanh
-
-function chuanHoa(txt){
-  txt = txt.toLowerCase().trim();
-  txt = txt.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  txt = txt.replace(/đ/g,'d').replace(/Đ/g,'d'); // SỬA LỖI CHỮ Đ
   txt = txt.replace(/\s+/g, ' ');
   return txt;
 }
 function chuanHoaKhongKhoang(txt){ return chuanHoa(txt).replace(/\s+/g,''); }
 
-// Tải hết tất cả các đời Doi1 -> Doi20 về 1 lần
 async function taiTatCa(){
   if(CACHE_TAT_CA) return CACHE_TAT_CA;
   CACHE_TAT_CA = [];
@@ -1204,7 +1187,6 @@ async function taiTatCa(){
         }
       }
       if(idxHeader === -1) continue;
-      // Chuyển thành danh sách người: mỗi người là 1 object {ten, doi, thongtin:{}}
       for(var k=0;k<tenNguoi.length;k++){
         var col = k+1;
         var nguoi = { ten: tenNguoi[k], doi: d, thongtin: {} };
@@ -1222,10 +1204,20 @@ async function taiTatCa(){
 
 function hienThiNguoi(nguoi){
   var s = '<b>=== ' + nguoi.ten + ' (Đời ' + nguoi.doi + ') ===</b><br>';
-  for(var k in nguoi.thongtin){
-    s += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>';
-  }
+  for(var k in nguoi.thongtin){ s += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
   return s + '<br>';
+}
+
+// Tìm người: phải khớp CẢ CỤM TÊN, không khớp 1 chữ lẻ như "hi"
+function timNguoi(tatCa, tuKhoa){
+  var kw = chuanHoa(tuKhoa).replace(/[^a-z0-9 ]/g,'').trim();
+  if(!kw || kw.length < 3) return [];
+  var tuKhoaArr = kw.split(' ');
+  return tatCa.filter(n => {
+    var tenChuan = chuanHoa(n.ten).replace(/\(.*?\)/g,'').trim(); // bỏ (11-Doi11.1)
+    // Khớp nếu tên chứa đủ tất cả các từ của từ khóa
+    return tuKhoaArr.every(w => tenChuan.includes(w));
+  });
 }
 
 async function guiHoi(){
@@ -1237,51 +1229,56 @@ async function guiHoi(){
   oNhap.value = '';
   oHien.scrollTop = oHien.scrollHeight;
 
-  var tu = chuanHoa(cauHoiGoc); // đức thái là ai
-  var tuKhongKhoang = chuanHoaKhongKhoang(cauHoiGoc); // ducthailàai
+  var tu = chuanHoa(cauHoiGoc);
+  var tuKhongKhoang = chuanHoaKhongKhoang(cauHoiGoc);
   var traLoi = '';
   var tatCa = await taiTatCa();
 
-  // 1) Gõ doi11 -> Hiện chi tiết tab Doi11
-  if(tuKhongKhoang.startsWith('doi') && /^doi\d+$/.test(tuKhongKhoang)){
+  // 1) doi11
+  if(/^doi\d+$/.test(tuKhongKhoang)){
     var soDoi = tuKhongKhoang.replace('doi','');
     var ds = tatCa.filter(n => String(n.doi) === String(soDoi));
     traLoi = '📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ' + soDoi + ' (Doi' + soDoi + '):<br><br>';
     ds.forEach(n => traLoi += hienThiNguoi(n));
     if(ds.length===0) traLoi = 'Đời ' + soDoi + ' chưa có dữ liệu!';
   }
-  // 2) Đời 11 có những ai? / Doi 11 co nhung ai?
+  // 2) Đời 11 có những ai? - ĐÃ SỬA LỖI CHỮ Đ
   else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai'))){
     var m = tu.match(/doi\s*(\d+)/);
     var soDoi2 = m ? m[1] : '';
     var ds2 = tatCa.filter(n => String(n.doi) === soDoi2);
     traLoi = '📜 <b>Đời ' + soDoi2 + ' có ' + ds2.length + ' người:</b><br><br>' + ds2.map(n => '• ' + n.ten).join('<br>');
   }
-  // 3) Cha của Đức Thung là ai? / Than phu cua...
-  else if(tu.includes('cha cua') || tu.includes('than phu') || tu.includes('bo cua') || tu.includes('cha ruot')){
-    var tenCanTim = tu.replace(/cha cua|than phu|bo cua|cha ruot|la ai|\?/g,'').trim();
-    var nguoi = tatCa.find(n => chuanHoa(n.ten).includes(tenCanTim) || tenCanTim.includes(chuanHoa(n.ten).split(' ').pop()));
-    if(nguoi){
-      // Tìm trong thông tin có chữ Thân phụ / Cha
+  // 3) Cha của Đức Thung là ai?
+  else if(tu.includes('cha cua') || tu.includes('than phu') || tu.includes('bo cua')){
+    var tenCanTim = tu.replace(/cha cua|than phu|bo cua|la ai|\?/g,'').trim();
+    var found = timNguoi(tatCa, tenCanTim);
+    if(found.length>0){
+      var nguoi = found[0];
       var kq = '';
-      for(var k in nguoi.thongtin){ if(k.toLowerCase().includes('than phu') || k.toLowerCase().includes('cha')) kq += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
-      traLoi = '👨‍👦 <b>Cha của ' + nguoi.ten + ':</b><br>' + (kq || 'Chưa có thông tin trong gia phả!');
-    } else traLoi = 'Không tìm thấy người tên ' + tenCanTim + ' trong gia phả!';
+      for(var k in nguoi.thongtin){ if(chuanHoa(k).includes('than phu') || chuanHoa(k).includes('cha')) kq += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
+      traLoi = '👨‍👦 <b>Cha của ' + nguoi.ten + ':</b><br>' + (kq || 'Chưa có thông tin!');
+    } else traLoi = 'Không tìm thấy người tên ' + tenCanTim + '!';
   }
-  // 4) Con của Đức Do là ai? / Hau due cua...
-  else if(tu.includes('con cua') || tu.includes('hau due') || tu.includes('con trai') || tu.includes('con gai')){
-    var tenCanTim2 = tu.replace(/con cua|hau due|con trai|con gai|la ai|\?/g,'').trim();
-    var nguoi2 = tatCa.find(n => chuanHoa(n.ten).includes(tenCanTim2));
-    if(nguoi2){
+  // 4) Con của Đức Do là ai?
+  else if(tu.includes('con cua') || tu.includes('hau due')){
+    var tenCanTim2 = tu.replace(/con cua|hau due|la ai|\?/g,'').trim();
+    var found2 = timNguoi(tatCa, tenCanTim2);
+    if(found2.length>0){
+      var nguoi2 = found2[0];
       var kq2 = '';
-      for(var k2 in nguoi2.thongtin){ if(k2.toLowerCase().includes('hau due') || k2.toLowerCase().includes('con')) kq2 += '• <b>' + k2 + ':</b> ' + nguoi2.thongtin[k2] + '<br>'; }
+      for(var k2 in nguoi2.thongtin){ if(chuanHoa(k2).includes('hau due')) kq2 += '• <b>' + k2 + ':</b> ' + nguoi2.thongtin[k2] + '<br>'; }
       traLoi = '👨‍👧‍👦 <b>Con của ' + nguoi2.ten + ':</b><br>' + (kq2 || 'Chưa có thông tin!');
     } else traLoi = 'Không tìm thấy người tên ' + tenCanTim2 + '!';
   }
-  // 5) Đức Thái là ai? -> Tìm tên trong tất cả các đời
+  // 5) Xin chào / Hi - ĐÃ SỬA: không đoán bậy nữa
+  else if(tu === 'hi' || tu === 'hello' || tu === 'xin chao' || tu === 'chao'){
+    traLoi = 'Chào bà con! Bạn gõ <b>doi11</b> hoặc <b>Đức Thái là ai?</b> hoặc <b>Đời 11 có những ai?</b> để xem nhé!';
+  }
+  // 6) Đức Thái là ai?
   else {
     var tenCanTim3 = tu.replace(/la ai|\?/g,'').trim();
-    var ketQua = tatCa.filter(n => chuanHoa(n.ten).includes(tenCanTim3) || tenCanTim3.includes(chuanHoa(n.ten).split(' ').pop()));
+    var ketQua = timNguoi(tatCa, tenCanTim3);
     if(ketQua.length > 0){
       traLoi = '🔍 Tìm thấy ' + ketQua.length + ' người tên giống <b>' + cauHoiGoc + '</b>:<br><br>';
       ketQua.forEach(n => traLoi += hienThiNguoi(n));
