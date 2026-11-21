@@ -1161,48 +1161,73 @@ function chuanHoa(txt){
   txt = txt.replace(/\s+/g, ''); // bỏ khoảng trắng: "doi 11" -> "doi11"
   return txt;
 }
+var SHEET_ID_GIA_PHA = "1rAF9A6Evj0BIa_GcdBs9vrV13-v4gepQNreJnNkmKU4";
+
+function chuanHoa(txt){
+  txt = txt.toLowerCase().trim();
+  txt = txt.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  txt = txt.replace(/\s+/g, '');
+  return txt;
+}
 
 async function guiHoi(){
   var oNhap = document.getElementById('chat-input');
   var oHien = document.getElementById('chat-messages');
   var cauHoi = oNhap.value.trim();
   if(!cauHoi) return;
-
   oHien.innerHTML += '<div style="text-align:right;margin:5px;"><b>Bạn:</b> ' + cauHoi + '</div>';
   oNhap.value = '';
   oHien.scrollTop = oHien.scrollHeight;
-
-  var tu = chuanHoa(cauHoi); // doi11
+  var tu = chuanHoa(cauHoi);
   var traLoi = '';
-
   if(tu.startsWith('doi')){
-    var soDoi = tu.replace('doi',''); // 11
-    var tenTab = 'Doi' + soDoi; // Doi11
+    var soDoi = tu.replace('doi','');
+    var tenTab = 'Doi' + soDoi;
     var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID_GIA_PHA + '/gviz/tq?tqx=out:json&sheet=' + tenTab;
     try{
       var res = await fetch(url);
       var text = await res.text();
       var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
       var rows = json.table.rows;
-      traLoi = '📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ' + soDoi + ' (' + tenTab + '):<br><br>';
-      rows.forEach(r => {
-        var cotA = r.c[0] ? r.c[0].v : '';
-        var cotB = r.c[1] ? r.c[1].v : '';
-        if(cotA && cotB) traLoi += '• <b>' + cotA + ':</b> ' + cotB + '<br>';
-        else if(cotA) traLoi += '<br><b>— ' + cotA + ' —</b><br>';
-      });
+      var idxHeader = -1;
+      var tenNguoi = [];
+      for(var i=0; i<rows.length; i++){
+        var c0 = rows[i].c[0] ? String(rows[i].c[0].v) : '';
+        if(c0.toUpperCase().includes('THUỘC TÍNH')){
+          idxHeader = i;
+          for(var j=1; j<rows[i].c.length; j++){
+            if(rows[i].c[j] && rows[i].c[j].v) tenNguoi.push(String(rows[i].c[j].v));
+          }
+          break;
+        }
+      }
+      if(idxHeader === -1){
+        traLoi = 'Không đọc được cấu trúc tab ' + tenTab + '!';
+      } else {
+        traLoi = '📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ' + soDoi + ' (' + tenTab + '):<br><br>';
+        for(var k=0; k<tenNguoi.length; k++){
+          var col = k + 1;
+          traLoi += '<b>=== ' + tenNguoi[k] + ' ===</b><br>';
+          for(var r = idxHeader + 1; r < rows.length; r++){
+            var thuocTinh = rows[r].c[0] ? String(rows[r].c[0].v).trim() : '';
+            var giaTri = (rows[r].c[col] && rows[r].c[col].v) ? String(rows[r].c[col].v).trim() : '';
+            if(!thuocTinh) continue;
+            if(!giaTri) giaTri = '—';
+            traLoi += '• <b>' + thuocTinh + ':</b> ' + giaTri + '<br>';
+          }
+          traLoi += '<br>';
+        }
+      }
     }catch(e){
-      traLoi = 'Không tìm thấy tab ' + tenTab + '! Bạn kiểm tra lại tên tab trong Sheet nhé!';
+      traLoi = 'Không tìm thấy tab ' + tenTab + '! Bạn kiểm tra lại tên tab nhé!';
     }
   } else {
     traLoi = 'Bạn gõ doi1, doi11, doi12... để xem chi tiết từng đời nhé! Ví dụ: gõ <b>doi11</b>';
   }
-
   oHien.innerHTML += '<div style="background:#f0f7f0;padding:8px;border-radius:8px;margin:5px;"><b>Gia phả:</b><br>' + traLoi + '</div>';
   oHien.scrollTop = oHien.scrollHeight;
 }
 
-// Cho phép bấm Enter để gửi
 document.getElementById('chat-input').addEventListener('keypress', function(e){
   if(e.key === 'Enter') guiHoi();
 });
