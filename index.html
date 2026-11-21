@@ -161,6 +161,36 @@ important;
 </style>
 </head>
 <body>
+<div id="man-hinh-khoa" style="position:fixed;inset:0;background:#fdf6e3;z-index:99999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;padding:25px;border-radius:15px;text-align:center;width:300px;box-shadow:0 5px 20px rgba(0,0,0,0.2);">
+    <h2 style="color:#8B0000;">🌳 Gia Phả Họ Nguyễn Đức</h2>
+    <p>Vui lòng nhập tài khoản dòng họ</p>
+    <input id="input-user" placeholder="Tên đăng nhập: nguyenduc" style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;"><br>
+    <input id="input-pass" type="password" placeholder="Mật khẩu" style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;"><br>
+    <button onclick="kiemTraDangNhap()" style="width:100%;padding:12px;background:#8B0000;color:white;border:none;border-radius:8px;font-weight:bold;font-size:16px;">Vào Xem Gia Phả</button>
+    <p id="bao-loi" style="color:red;display:none;">Sai tài khoản hoặc mật khẩu!</p>
+  </div>
+</div>
+
+<script>
+var LINK_KIEM_TRA = "https://script.google.com/macros/s/AKfycbyxVPGUFS8n0iTGT0IRdISUyPFCcZALOUdm5pAykvNBNun1iT7aJwHg_qI5OQqK6BxN/exec";
+
+async function kiemTraDangNhap(){
+  var u = document.getElementById('input-user').value.trim();
+  var p = document.getElementById('input-pass').value.trim();
+  var res = await fetch(LINK_KIEM_TRA, {method:'POST', body: JSON.stringify({user:u, pass:p})});
+  var data = await res.json();
+  if(data.ok){
+    document.getElementById('man-hinh-khoa').style.display = 'none';
+    localStorage.setItem('da_dang_nhap_gia_pha','1');
+  } else {
+    document.getElementById('bao-loi').style.display = 'block';
+  }
+}
+if(localStorage.getItem('da_dang_nhap_gia_pha')==='1'){
+  document.getElementById('man-hinh-khoa').style.display = 'none';
+}
+</script>
 <!-- NÚT CHIA SẺ LUÔN HIỆN -->
 <button onclick="chiaSeGiaPha()" style="position:fixed;top:10px;right:10px;z-index:9999;background:#1e88e5;color:white;border:2px solid white;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;">📤 Chia sẻ</button>
 
@@ -1122,43 +1152,60 @@ function moChat() { document.getElementById('chat-box').style.display = 'block';
 <!-- HẾT CHATBOT --><!-- NÚT CHIA SẺ CHO CẢ HỌ -->
 <button onclick="chiaSeGiaPha()" style="background:#1e88e5;color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:bold;">📤 Chia sẻ</button></button>
 <script>
+var SHEET_ID_GIA_PHA = "1rAF9A6Evj0BIa_GcdBs9vrV13-v4gepQNreJnNkmKU4";
+
+// Hàm hiểu gõ không dấu: doi11, doi 11, Doi 11 đều hiểu là Doi11
+function chuanHoa(txt){
+  txt = txt.toLowerCase().trim();
+  txt = txt.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // bỏ dấu
+  txt = txt.replace(/\s+/g, ''); // bỏ khoảng trắng: "doi 11" -> "doi11"
+  return txt;
+}
+
 async function guiHoi(){
-  const input = document.getElementById('chat-input');
-  let q = input.value.trim();
-  if(!q) return;
-  let qThap2 = q.toLowerCase().trim();
-if(qThap2 === 'hi' || qThap2 === 'hello' || qThap2 === 'xin chao' || qThap2 === 'xin chào'){
-  const box2 = document.getElementById('chat-messages');
-  box2.innerHTML += '<div><b>Bạn:</b> ' + q + '</div>';
-  box2.innerHTML += '<div><b>Gia phả:</b> Xin chào, bạn cần thông tin gì ạ?</div>';
-  input.value = '';
-  box2.scrollTop = box2.scrollHeight;
-  return;
-}
-  let qThap = q.toLowerCase();
-  let m = null;
-if(qThap.includes('thu')){ m = qThap.match(/(\d+)/); }
-else if(qThap.includes('doi') || qThap.includes('dow') || qThap.includes('ddow')){ m = qThap.match(/(\d+)/); }
-  if(m){ q = 'Đời ' + m[1] + ' có những ai?'; }
-  else { q = doiCauKhongDauThanhCoDau(q); }
-  const box = document.getElementById('chat-messages');
-  box.innerHTML += '<div><b>Bạn:</b> ' + q + '</div>';
-  input.value = '';
-  box.innerHTML += '<div id="dang-goi">Gia phả: Đang trả lời...</div>';
-  box.scrollTop = box.scrollHeight;
-  try{
-    const res = await fetch('https://giapha-xomdongmieu.nhatbai1111.workers.dev', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question: q}) });
-    const data = await res.json();
-    const el = document.getElementById('dang-goi');
-    if(el) el.remove();
-    box.innerHTML += '<div><b>Gia phả:</b> ' + (data.answer || 'Mình chưa tìm thấy câu trả lời, bạn hỏi rõ hơn giúp mình nhé!') + '</div>';
-    box.scrollTop = box.scrollHeight;
-  }catch(e){
-    const el = document.getElementById('dang-goi');
-    if(el) el.innerHTML = 'Lỗi kết nối, thử lại sau!';
+  var oNhap = document.getElementById('chat-input');
+  var oHien = document.getElementById('chat-messages');
+  var cauHoi = oNhap.value.trim();
+  if(!cauHoi) return;
+
+  oHien.innerHTML += '<div style="text-align:right;margin:5px;"><b>Bạn:</b> ' + cauHoi + '</div>';
+  oNhap.value = '';
+  oHien.scrollTop = oHien.scrollHeight;
+
+  var tu = chuanHoa(cauHoi); // doi11
+  var traLoi = '';
+
+  if(tu.startsWith('doi')){
+    var soDoi = tu.replace('doi',''); // 11
+    var tenTab = 'Doi' + soDoi; // Doi11
+    var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID_GIA_PHA + '/gviz/tq?tqx=out:json&sheet=' + tenTab;
+    try{
+      var res = await fetch(url);
+      var text = await res.text();
+      var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+      var rows = json.table.rows;
+      traLoi = '📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ' + soDoi + ' (' + tenTab + '):<br><br>';
+      rows.forEach(r => {
+        var cotA = r.c[0] ? r.c[0].v : '';
+        var cotB = r.c[1] ? r.c[1].v : '';
+        if(cotA && cotB) traLoi += '• <b>' + cotA + ':</b> ' + cotB + '<br>';
+        else if(cotA) traLoi += '<br><b>— ' + cotA + ' —</b><br>';
+      });
+    }catch(e){
+      traLoi = 'Không tìm thấy tab ' + tenTab + '! Bạn kiểm tra lại tên tab trong Sheet nhé!';
+    }
+  } else {
+    traLoi = 'Bạn gõ doi1, doi11, doi12... để xem chi tiết từng đời nhé! Ví dụ: gõ <b>doi11</b>';
   }
+
+  oHien.innerHTML += '<div style="background:#f0f7f0;padding:8px;border-radius:8px;margin:5px;"><b>Gia phả:</b><br>' + traLoi + '</div>';
+  oHien.scrollTop = oHien.scrollHeight;
 }
-document.getElementById('chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter') guiHoi(); });
+
+// Cho phép bấm Enter để gửi
+document.getElementById('chat-input').addEventListener('keypress', function(e){
+  if(e.key === 'Enter') guiHoi();
+});
 </script>
 <button type="button" id="nut-mo-chat" onclick="moChat()" ...>💬</button>
 
