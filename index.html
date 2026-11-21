@@ -1244,7 +1244,7 @@ async function guiHoi(){
   }
   // 2) Đời 11 có những ai? - ĐÃ SỬA LỖI CHỮ Đ
     // Đời 9 có con ai? -> Hiện CON của Đời 9 (Hậu duệ), không phải liệt kê Đời 9
-  else if(tu.includes('doi') && (tu.includes('co con') || tu.includes('con ai') || tu.includes('con cua doi'))){
+	else if(tu.includes('doi') && (tu.includes('co con') || tu.includes('con ai') || tu.includes('con cua doi') || tu.includes('con doi'))){
     var mCon = tu.match(/doi\s*(\d+)/);
     var soDoiCon = mCon ? mCon[1] : '';
     var dsCha = tatCa.filter(n => String(n.doi) === soDoiCon);
