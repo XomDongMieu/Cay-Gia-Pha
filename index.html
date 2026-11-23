@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -182,9 +181,23 @@ important;
     <h2 style="color:#8B0000;">🌳 Gia Phả Họ Nguyễn Đức</h2>
     <p>Vui lòng nhập tài khoản dòng họ</p>
     <input id="input-user" placeholder="Tên đăng nhập: nguyenduc" style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;"><br>
-    <input id="input-pass" type="password" placeholder="Mật khẩu" style="width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;"><br>
+ <div style="position:relative;width:100%;margin-bottom:10px;">
+  <input id="input-pass" type="password" placeholder="Mật khẩu" style="width:100%;padding:12px 40px 12px 12px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;">
+  <button type="button" onclick="doiMatKhau()" id="btn-mat" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;padding:4px;">👁️</button>
+</div>
     <button onclick="kiemTraDangNhap()" style="width:100%;padding:12px;background:#8B0000;color:white;border:none;border-radius:8px;font-weight:bold;font-size:16px;">Vào Xem Gia Phả</button>
-    <p id="bao-loi" style="color:red;display:none;">Sai tài khoản hoặc mật khẩu!</p>
+    function doiMatKhau(){
+  var oPass = document.getElementById('input-pass');
+  var btn = document.getElementById('btn-mat');
+  if(oPass.type === 'password'){
+    oPass.type = 'text';
+    btn.innerText = '🙈';
+  } else {
+    oPass.type = 'password';
+    btn.innerText = '👁️';
+  }
+}
+	<p id="bao-loi" style="color:red;display:none;">Sai tài khoản hoặc mật khẩu!</p>
   </div>
 </div>
 
