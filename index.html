@@ -1110,14 +1110,23 @@ function chiaSeGiaPha(){
             MN[0].dataset.tip=L('👆 Bấm vào đây để xem hướng dẫn','👆 Tap here for the guide');
             H1.textContent=L(H1_VI,'NGUYỄN ĐỨC FAMILY TREE');
             MN.forEach(function(e,i){e.textContent=L(e.dataset.vi,MENU_EN[i])});
-            MN.forEach(function(e){var mm=(e.getAttribute('href')||'').match(/^(chi-tiet|danh-gia)\.html/);if(e.tagName==='A'&&mm)e.href=mm[1]+'.html'+(LANG==='en'?'?lang=en':'')});
+            MN.forEach(function(e){var mm=(e.getAttribute('href')||'').match(/^(chi-tiet|danh-gia)\.html/);if(e.tagName
+			==='A'&&mm)e.href=mm[1]+'.html'+(LANG==='en'?'?lang=en':'')});
             NW.forEach(function(w,k){var o=ORIG[k],e=LANG==='en'?TREE_EN[k]:null;
                 if(o.b)o.b.textContent=e?e[0]:o.bt;
                 if(o.n)o.n.textContent=e?e[0]:o.nt;
+			
                 if(o.m&&k===3)o.m.innerHTML=e?e[1]:o.mh;
                 o.t.innerHTML='<div class="pop-title">'+(e?e[2]:o.pt)+'</div>'+(e?e[3]:o.body)});
             if(!document.body.classList.contains('inview'))refreshTree(false);
             if(!keep)showView(curV);
+			  // Cho chatbot tự động theo ngôn ngữ mới
+  try{
+    if(typeof CHAT !== 'undefined' && typeof renderChat === 'function'){
+      CHAT.push({r:'a', h: LANG === 'en' ? 'Language switched to English. Now you can ask me in English, e.g. "How many children did Duc Thung have?"' : 'Đã chuyển sang tiếng Việt. Bạn hỏi bằng tiếng Việt nhé, ví dụ "Đức Thung có mấy người con?"'});
+      renderChat();
+    }
+  }catch(e){}
         }
         SEL.onchange=function(){setLang(SEL.value)};
         function route(){
