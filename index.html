@@ -1313,12 +1313,13 @@ document.getElementById('chat-input').addEventListener('keypress', function(e){
   if(e.key === 'Enter') guiHoi();
 });
 </script>
-<button type="button" id="nut-mo-chat" onclick="moChat()" ...>💬</button>
 
+<button type="button" id="nut-mo-chat" onclick="moChat()">💬</button>
+
+<script>
 function shareGiaPha() {
   const link = "https://xomdongmieu.github.io/Cay-Gia-Pha/";
   const text = "Gia phả Xóm Đông Miếu - Bấm vào để xem cây gia phả nhà mình nè: ";
-  
   // Nếu là điện thoại, nó sẽ hiện bảng Zalo, Facebook, Messenger để chọn
   if (navigator.share) {
     navigator.share({ title: 'Gia phả Xóm Đông Miếu', text: text, url: link });
@@ -1330,12 +1331,14 @@ function shareGiaPha() {
   }
 }
 </script>
+
 <!-- BẢNG HƯỚNG DẪN - Lấy từ file huong-dan.html -->
 <div id="bang-huong-dan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
   <div id="noi-dung-huong-dan" style="background:white; width:92%; max-width:520px; max-height:85%; overflow-y:auto; border-radius:12px; padding:18px; position:relative;">
     Đang tải hướng dẫn...
   </div>
 </div>
+
 <script>
 function moHuongDan(){
   document.getElementById('bang-huong-dan').style.display='flex';
