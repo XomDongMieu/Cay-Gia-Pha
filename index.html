@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -16,7 +17,8 @@ body::before{content:"";position:fixed;inset:7px;border:3px double var(--net);po
 .hoanh{display:flex;align-items:center;justify-content:center;gap:clamp(4px,2vw,28px);width:100%;max-width:1100px;margin-bottom:14px;position:relative;z-index:1}
 .long{flex:1 1 0;min-width:0;max-width:300px;height:auto}
 .long.trai{transform:scaleX(-1)}
-.bang{text-align:center;padding:12px clamp(14px,3vw,34px) 14px;background:linear-gradient(var(--son2),var(--son));border:2px solid var(--vang);border-radius:4px;box-shadow:0 0 0 4px var(--son),0 0 0 6px var(--vang),0 8px 18px rgba(59,35,20,.45);position:relative}
+.bang{text-align:center;padding:12px clamp(14px,3vw,34px) 14px;background:linear-gradient(var(--son2),var(--son));borde
+r:2px solid var(--vang);border-radius:4px;box-shadow:0 0 0 4px var(--son),0 0 0 6px var(--vang),0 8px 18px rgba(59,35,20,.45);position:relative}
 .nguyet{display:block;margin:-34px auto 4px;width:44px;height:44px}
 h1{font-family:"Playfair Display","Noto Serif",Georgia,serif;font-weight:800;color:var(--vang2);margin:0;font-size:clamp(17px,3.2vw,30px);letter-spacing:.06em;text-shadow:0 2px 0 #3b0805,0 0 12px rgba(233,193,94,.35);line-height:1.25}
 .van{display:block;margin:8px auto 0;width:min(240px,70%);height:12px}
@@ -158,6 +160,20 @@ important;
     min-width: 38px !important;
   }
 }
+</style>
+<style>
+#overlay{ display:none;position:fixed;inset:0;background:rgba(0,0,0,.5); z-index:10000;justify-content:center;align-items:flex-start;padding:20px 12px;overflow-y:auto; }
+#overlay.show{display:flex;}
+#box-huongdan{ background:#fff;width:100%;max-width:480px;border-radius:14px; padding:18px 16px 12px;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25); }
+#btn-dong{ position:absolute;right:12px;top:10px;border:none;background:#eee; width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer; }
+#box-huongdan h2{font-size:18px;color:#2e7d32;margin-bottom:6px;padding-right:36px;}
+#box-huongdan .mo-ta{font-size:14px;color:#555;margin-bottom:12px;line-height:1.5;}
+#box-huongdan .nhom{margin-bottom:14px;}
+#box-huongdan .nhom h3{font-size:15px;color:#333;margin-bottom:6px;}
+#box-huongdan .vi-du{ display:flex;flex-wrap:wrap;gap:6px; }
+#box-huongdan .vi-du button{ background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20; padding:7px 10px;border-radius:20px;font-size:13px;cursor:pointer; }
+#box-huongdan .luu-y{ background:#fff8e1;border:1px solid #ffe082;border-radius:8px; padding:10px;font-size:13px;line-height:1.6;color:#5d4037; }
+#box-huongdan .luu-y b{color:#e65100;}
 </style>
 </head>
 <body>
@@ -1333,16 +1349,16 @@ function shareGiaPha() {
 </div>
 
 <script>
-function moHuongDan(){
-  document.getElementById('bang-huong-dan').style.display='flex';
-  if(!window.daTaiHuongDan){
-    fetch('huong-dan.html').then(r=>r.text()).then(t=>{
-      document.getElementById('noi-dung-huong-dan').innerHTML = t;
-      window.daTaiHuongDan = true;
-    });
+function moHuongDan(){ document.getElementById('overlay').classList.add('show'); }
+function dongHuongDan(){ document.getElementById('overlay').classList.remove('show'); }
+function chonCau(cau){
+  var oNhap = document.getElementById('chat-input');
+  if(oNhap){
+    oNhap.value = cau;
+    oNhap.focus();
+    dongHuongDan();
   }
 }
-function dongHuongDan(){ document.getElementById('bang-huong-dan').style.display='none'; }
 </script>
 <script>
 function chiaSeGiaPha(){
@@ -1356,7 +1372,54 @@ function chiaSeGiaPha(){
     });
   }
 }
+
 </script>
+<!-- HỘP HƯỚNG DẪN -->
+<div id="overlay" onclick="if(event.target===this) dongHuongDan()">
+  <div id="box-huongdan">
+    <button id="btn-dong" onclick="dongHuongDan()">✕</button>
+    <h2>📜 Hướng dẫn hỏi Chatbot Gia phả</h2>
+    <p class="mo-ta">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
+    <div class="nhom">
+      <h3>1. Xem 1 đời</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('doi11')">doi11</button>
+        <button onclick="chonCau('Đời 9 có những ai?')">Đời 9 có những ai?</button>
+        <button onclick="chonCau('đời 9 là ai')">đời 9 là ai</button>
+      </div>
+    </div>
+    <div class="nhom">
+      <h3>2. Hỏi con của 1 đời</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('con đời 9 là ai')">con đời 9 là ai</button>
+        <button onclick="chonCau('đời 9 có con ai')">đời 9 có con ai</button>
+      </div>
+    </div>
+    <div class="nhom">
+      <h3>3. Hỏi 1 người</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('Đức Thái là ai?')">Đức Thái là ai?</button>
+        <button onclick="chonCau('Đức Mùi là ai?')">Đức Mùi là ai?</button>
+        <button onclick="chonCau('Đức Thung là ai?')">Đức Thung là ai?</button>
+      </div>
+    </div>
+    <div class="nhom">
+      <h3>4. Hỏi cha / con của 1 người</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('Cha của Đức Thung là ai?')">Cha của Đức Thung là ai?</button>
+        <button onclick="chonCau('Con của Đức Do là ai?')">Con của Đức Do là ai?</button>
+        <button onclick="chonCau('Con của Đức Từ là ai?')">Con của Đức Từ là ai?</button>
+      </div>
+    </div>
+    <div class="luu-y">
+      <b>💡 Lưu ý:</b><br>
+      • Có chữ <b>“con”</b> → Hỏi <b>con</b> của đời đó / người đó.<br>
+      • Không có chữ “con” → Hỏi <b>người của đời đó</b>.<br>
+      • Ví dụ: <b>“Đời 9 có những ai?”</b> là hỏi Đời 9, còn <b>“con đời 9 là ai”</b> là hỏi con của Đời 9 (tức Đời 10).<br>
+      • Gõ không dấu cũng được: <b>doi9, duc thai la ai?</b>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 </body>
