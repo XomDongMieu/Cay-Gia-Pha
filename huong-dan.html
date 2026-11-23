@@ -1,11 +1,133 @@
-<button onclick="dongHuongDan()" style="position:absolute; top:8px; right:10px; border:none; background:none; font-size:22px; cursor:pointer;">×</button>
-<h3 style="margin-top:0; color:#0d6efd;">📖 Hướng dẫn hỏi Chatbot</h3>
-<p><b>Nguyên tắc:</b> Hỏi phải có đủ Tên + Muốn hỏi gì. Ví dụ: <b>Đức Thái là ai?</b></p>
-<p><b>✅ Hỏi ĐÚNG:</b></p>
-<p>- Đức Thái là ai?<br>- Cha của Đức Thung là ai?<br>- Con của Đức Do là ai?<br>- Đời 11 có những ai?</p>
-<p><b>❌ Hỏi SAI:</b></p>
-<p>- Thái là ai? (thiếu chữ Đức)<br>- Đức (hỏi chung chung quá)<br>- Đời 11 (thiếu chữ có những ai)</p>
-<p><b>💡 Gõ không dấu cũng được:</b><br>Doi 11 = Đời 11<br>duc thai la ai = Đức Thái là ai</p>
-<p><b>⚠️ Nếu nó báo "Chưa hợp lý":</b> Là do hỏi quá ngắn, hãy hỏi dài ra: <i>Doi 11 co nhung ai?</i></p>
-<p><b>⚠️ Nếu nó báo "Con: Chưa rõ":</b> Là do trong Sổ gia phả chưa ghi con, không phải lỗi web!</p>
-<button onclick="dongHuongDan()" style="width:100%; background:#0d6efd; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">Đã hiểu, bắt đầu hỏi</button>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hướng dẫn - Chatbot Gia phả</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial, sans-serif;}
+  body{background:#f5f5f0;padding:16px;}
+  /* Nút ? */
+  #btn-huongdan{
+    position:fixed;right:16px;top:16px;z-index:999;
+    width:44px;height:44px;border-radius:50%;
+    background:#2e7d32;color:#fff;font-size:22px;font-weight:bold;
+    border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  #btn-huongdan:active{transform:scale(.95);}
+  /* Khung tối phía sau */
+  #overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+    z-index:1000;justify-content:center;align-items:flex-start;padding:20px 12px;overflow-y:auto;
+  }
+  #overlay.show{display:flex;}
+  /* Hộp hướng dẫn */
+  #box-huongdan{
+    background:#fff;width:100%;max-width:480px;border-radius:14px;
+    padding:18px 16px 12px;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+  }
+  #btn-dong{
+    position:absolute;right:12px;top:10px;border:none;background:#eee;
+    width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;
+  }
+  h2{font-size:18px;color:#2e7d32;margin-bottom:6px;padding-right:36px;}
+  .mo-ta{font-size:14px;color:#555;margin-bottom:12px;line-height:1.5;}
+  .nhom{margin-bottom:14px;}
+  .nhom h3{font-size:15px;color:#333;margin-bottom:6px;}
+  .vi-du{
+    display:flex;flex-wrap:wrap;gap:6px;
+  }
+  .vi-du button{
+    background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20;
+    padding:7px 10px;border-radius:20px;font-size:13px;cursor:pointer;
+  }
+  .vi-du button:active{background:#c8e6c9;}
+  .luu-y{
+    background:#fff8e1;border:1px solid #ffe082;border-radius:8px;
+    padding:10px;font-size:13px;line-height:1.6;color:#5d4037;
+  }
+  .luu-y b{color:#e65100;}
+</style>
+</head>
+<body>
+
+<!-- NÚT ? -->
+<button id="btn-huongdan" onclick="moHuongDan()">?</button>
+
+<!-- HỘP HƯỚNG DẪN -->
+<div id="overlay" onclick="if(event.target===this) dongHuongDan()">
+  <div id="box-huongdan">
+    <button id="btn-dong" onclick="dongHuongDan()">✕</button>
+    <h2>📜 Hướng dẫn hỏi Chatbot Gia phả</h2>
+    <p class="mo-ta">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
+
+    <div class="nhom">
+      <h3>1. Xem 1 đời</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('doi11')">doi11</button>
+        <button onclick="chonCau('Đời 9 có những ai?')">Đời 9 có những ai?</button>
+        <button onclick="chonCau('đời 9 là ai')">đời 9 là ai</button>
+      </div>
+    </div>
+
+    <div class="nhom">
+      <h3>2. Hỏi con của 1 đời</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('con đời 9 là ai')">con đời 9 là ai</button>
+        <button onclick="chonCau('đời 9 có con ai')">đời 9 có con ai</button>
+      </div>
+    </div>
+
+    <div class="nhom">
+      <h3>3. Hỏi 1 người</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('Đức Thái là ai?')">Đức Thái là ai?</button>
+        <button onclick="chonCau('Đức Mùi là ai?')">Đức Mùi là ai?</button>
+        <button onclick="chonCau('Đức Thung là ai?')">Đức Thung là ai?</button>
+      </div>
+    </div>
+
+    <div class="nhom">
+      <h3>4. Hỏi cha / con của 1 người</h3>
+      <div class="vi-du">
+        <button onclick="chonCau('Cha của Đức Thung là ai?')">Cha của Đức Thung là ai?</button>
+        <button onclick="chonCau('Con của Đức Do là ai?')">Con của Đức Do là ai?</button>
+        <button onclick="chonCau('Con của Đức Từ là ai?')">Con của Đức Từ là ai?</button>
+      </div>
+    </div>
+
+    <div class="luu-y">
+      <b>💡 Lưu ý:</b><br>
+      • Có chữ <b>“con”</b> → Hỏi <b>con</b> của đời đó / người đó.<br>
+      • Không có chữ “con” → Hỏi <b>người của đời đó</b>.<br>
+      • Ví dụ: <b>“Đời 9 có những ai?”</b> là hỏi Đời 9, còn <b>“con đời 9 là ai”</b> là hỏi con của Đời 9 (tức Đời 10).<br>
+      • Gõ không dấu cũng được: <b>doi9, duc thai la ai?</b>
+    </div>
+  </div>
+</div>
+
+<script>
+function moHuongDan(){
+  document.getElementById('overlay').classList.add('show');
+}
+function dongHuongDan(){
+  document.getElementById('overlay').classList.remove('show');
+}
+function chonCau(cau){
+  // Điền vào ô nhập chat nếu có, nếu không thì copy
+  var oNhap = document.getElementById('chat-input');
+  if(oNhap){
+    oNhap.value = cau;
+    oNhap.focus();
+    dongHuongDan();
+  } else {
+    // Nếu file này mở riêng, copy câu hỏi
+    navigator.clipboard.writeText(cau);
+    alert('Đã copy: ' + cau);
+    dongHuongDan();
+  }
+}
+</script>
+
+</body>
+</html>
