@@ -1255,18 +1255,44 @@ function timNguoi(tatCa, tuKhoa){
     return tuKhoaArr.every(w => tenChuan.includes(w));
   });
 }
-
 async function guiHoi(){
   var oNhap = document.getElementById('chat-input');
   var oHien = document.getElementById('chat-messages');
   var cauHoiGoc = oNhap.value.trim();
   if(!cauHoiGoc) return;
-  oHien.innerHTML += '<div style="text-align:right;margin:5px;"><b>Bạn:</b> ' + cauHoiGoc + '</div>';
+  oHien.innerHTML += '<div style="text-align:right;margin:5px;"><b>'+L('Bạn:','You:')+'</b> ' + cauHoiGoc + '</div>';
   oNhap.value = '';
   oHien.scrollTop = oHien.scrollHeight;
-
   var tu = chuanHoa(cauHoiGoc);
   var tuKhongKhoang = chuanHoaKhongKhoang(cauHoiGoc);
+
+  // --- DỊCH CÂU HỎI TIẾNG ANH SANG MẪU TIẾNG VIỆT ĐỂ TRA CỨU ---
+  if(LANG==='en'){
+    // generation 11 / gen 11 / who is in generation 11
+    if(tu.includes('generation') || /^gen\s*\d+/.test(tu)){
+      var mGen = tu.match(/\d+/);
+      if(mGen) tu = 'doi ' + mGen[0] + ' co nhung ai';
+      tuKhongKhoang = 'doi' + (mGen ? mGen[0] : '');
+    }
+    // who are children of Duc Thung / children of Duc Thung
+    else if(tu.includes('children of') || tu.includes('child of') || tu.includes('descendants of')){
+      var tChild = tu.replace(/who are|who is|children of|child of|descendants of|are|\?/g,'').trim();
+      tu = 'con cua ' + tChild;
+    }
+    // who is father of Duc Thung / father of Duc Thung
+    else if(tu.includes('father of') || tu.includes('dad of')){
+      var tCha = tu.replace(/who is|father of|dad of|is|\?/g,'').trim();
+      tu = 'cha cua ' + tCha;
+    }
+    // who is Duc Thai?
+    else if(tu.includes('who is')){
+      var tWho = tu.replace(/who is|\?/g,'').trim();
+      tu = tWho + ' la ai';
+    }
+    // doi11 dạng tiếng Anh: doi 11
+    if(/^doi\s*\d+$/.test(tu)) tuKhongKhoang = tu.replace(/\s+/g,'');
+  }
+
   var traLoi = '';
   var tatCa = await taiTatCa();
 
@@ -1274,34 +1300,32 @@ async function guiHoi(){
   if(/^doi\d+$/.test(tuKhongKhoang)){
     var soDoi = tuKhongKhoang.replace('doi','');
     var ds = tatCa.filter(n => String(n.doi) === String(soDoi));
-    traLoi = '📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ' + soDoi + ' (Doi' + soDoi + '):<br><br>';
+    traLoi = L('📜 CHI TIẾT PHẢ HỆ — ĐỜI THỨ ','📜 FAMILY TREE DETAIL — GENERATION ') + soDoi + L(' (Doi',' (Gen') + soDoi + '):<br><br>';
     ds.forEach(n => traLoi += hienThiNguoi(n));
-    if(ds.length===0) traLoi = 'Đời ' + soDoi + ' chưa có dữ liệu!';
+    if(ds.length===0) traLoi = L('Đời ','Generation ') + soDoi + L(' chưa có dữ liệu!',' has no data yet!');
   }
-  // 2) Đời 11 có những ai? - ĐÃ SỬA LỖI CHỮ Đ
-    // Đời 9 có con ai? -> Hiện CON của Đời 9 (Hậu duệ), không phải liệt kê Đời 9
-	else if(tu.includes('doi') && (tu.includes('co con') || tu.includes('con ai') || tu.includes('con cua doi') || tu.includes('con doi'))){
+  // 2) Đời 11 có con ai? -> Hiện CON của Đời 9
+  else if(tu.includes('doi') && (tu.includes('co con') || tu.includes('con ai') || tu.includes('con cua doi') || tu.includes('con doi'))){
     var mCon = tu.match(/doi\s*(\d+)/);
     var soDoiCon = mCon ? mCon[1] : '';
     var dsCha = tatCa.filter(n => String(n.doi) === soDoiCon);
-    traLoi = '👨‍👧‍👦 <b>Con của Đời ' + soDoiCon + ':</b><br><br>';
+    traLoi = L('👨‍👧‍👦 <b>Con của Đời ','👨‍👧‍👦 <b>Children of Generation ') + soDoiCon + ':</b><br><br>';
     dsCha.forEach(n => {
       var hauDue = '';
       for(var k in n.thongtin){ if(chuanHoa(k).includes('hau due')) hauDue = n.thongtin[k]; }
-      traLoi += '• <b>' + n.ten + '</b> có con: ' + (hauDue || 'Chưa có thông tin') + '<br>';
+      traLoi += '• <b>' + n.ten + '</b> ' + L('có con: ','has children: ') + (hauDue || L('Chưa có thông tin','No information yet')) + '<br>';
     });
-    // Gợi ý thêm: Con của Đời 9 chính là Đời 10
     var doiSau = parseInt(soDoiCon) + 1;
     var dsSau = tatCa.filter(n => String(n.doi) === String(doiSau));
     if(dsSau.length>0){
-      traLoi += '<br>📜 <b>=> Chính là Đời ' + doiSau + ' có ' + dsSau.length + ' người:</b><br>' + dsSau.map(n => '• ' + n.ten).join('<br>');
+      traLoi += '<br>📜 <b>' + L('=> Chính là Đời ','=> That is Generation ') + doiSau + L(' có ',' has ') + dsSau.length + L(' người:',' people:') + '</b><br>' + dsSau.map(n => '• ' + n.ten).join('<br>');
     }
   }
   else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai') || tu.includes('con') || tu.includes('la ai')) && !tu.includes('cha cua') && !tu.includes('con cua')){
     var m = tu.match(/doi\s*(\d+)/);
     var soDoi2 = m ? m[1] : '';
     var ds2 = tatCa.filter(n => String(n.doi) === soDoi2);
-    traLoi = '📜 <b>Đời ' + soDoi2 + ' có ' + ds2.length + ' người:</b><br><br>' + ds2.map(n => '• ' + n.ten).join('<br>');
+    traLoi = '📜 <b>' + L('Đời ','Generation ') + soDoi2 + L(' có ',' has ') + ds2.length + L(' người:',' people:') + '</b><br><br>' + ds2.map(n => '• ' + n.ten).join('<br>');
   }
   // 3) Cha của Đức Thung là ai?
   else if(tu.includes('cha cua') || tu.includes('than phu') || tu.includes('bo cua')){
@@ -1311,8 +1335,8 @@ async function guiHoi(){
       var nguoi = found[0];
       var kq = '';
       for(var k in nguoi.thongtin){ if(chuanHoa(k).includes('than phu') || chuanHoa(k).includes('cha')) kq += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
-      traLoi = '👨‍👦 <b>Cha của ' + nguoi.ten + ':</b><br>' + (kq || 'Chưa có thông tin!');
-    } else traLoi = 'Không tìm thấy người tên ' + tenCanTim + '!';
+      traLoi = '👨‍👦 <b>' + L('Cha của ','Father of ') + nguoi.ten + ':</b><br>' + (kq || L('Chưa có thông tin!','No information yet!'));
+    } else traLoi = L('Không tìm thấy người tên ','No one named ') + tenCanTim + '!';
   }
   // 4) Con của Đức Do là ai?
   else if(tu.includes('con cua') || tu.includes('hau due')){
@@ -1322,29 +1346,27 @@ async function guiHoi(){
       var nguoi2 = found2[0];
       var kq2 = '';
       for(var k2 in nguoi2.thongtin){ if(chuanHoa(k2).includes('hau due')) kq2 += '• <b>' + k2 + ':</b> ' + nguoi2.thongtin[k2] + '<br>'; }
-      traLoi = '👨‍👧‍👦 <b>Con của ' + nguoi2.ten + ':</b><br>' + (kq2 || 'Chưa có thông tin!');
-    } else traLoi = 'Không tìm thấy người tên ' + tenCanTim2 + '!';
+      traLoi = '👨‍👧‍👦 <b>' + L('Con của ','Children of ') + nguoi2.ten + ':</b><br>' + (kq2 || L('Chưa có thông tin!','No information yet!'));
+    } else traLoi = L('Không tìm thấy người tên ','No one named ') + tenCanTim2 + '!';
   }
-  // 5) Xin chào / Hi - ĐÃ SỬA: không đoán bậy nữa
+  // 5) Xin chào / Hi
   else if(tu === 'hi' || tu === 'hello' || tu === 'xin chao' || tu === 'chao'){
-    traLoi = 'Chào bà con! Bạn gõ <b>doi11</b> hoặc <b>Đức Thái là ai?</b> hoặc <b>Đời 11 có những ai?</b> để xem nhé!';
+    traLoi = L('Chào bà con! Bạn gõ <b>doi11</b> hoặc <b>Đức Thái là ai?</b> hoặc <b>Đời 11 có những ai?</b> để xem nhé!','Hello! Type <b>doi11</b> or <b>Who is Duc Thai?</b> or <b>Who is in Gen 11?</b> to look up!');
   }
   // 6) Đức Thái là ai?
   else {
     var tenCanTim3 = tu.replace(/la ai|\?/g,'').trim();
     var ketQua = timNguoi(tatCa, tenCanTim3);
     if(ketQua.length > 0){
-      traLoi = '🔍 Tìm thấy ' + ketQua.length + ' người tên giống <b>' + cauHoiGoc + '</b>:<br><br>';
+      traLoi = '🔍 ' + L('Tìm thấy ','Found ') + ketQua.length + L(' người tên giống <b>',' people with similar name <b>') + cauHoiGoc + '</b>:<br><br>';
       ketQua.forEach(n => traLoi += hienThiNguoi(n));
     } else {
-      traLoi = 'Không tìm thấy ai tên <b>' + cauHoiGoc + '</b>! Bạn thử gõ <b>doi11</b> hoặc <b>Đời 11 có những ai?</b> nhé!';
+      traLoi = L('Không tìm thấy ai tên <b>','No one named <b>') + cauHoiGoc + L('</b>! Bạn thử gõ <b>doi11</b> hoặc <b>Đời 11 có những ai?</b> nhé!','</b> was found! Try <b>doi11</b> or <b>Who is in Gen 11?</b>');
     }
   }
-
-  oHien.innerHTML += '<div style="background:#f0f7f0;padding:8px;border-radius:8px;margin:5px;"><b>Gia phả:</b><br>' + traLoi + '</div>';
+  oHien.innerHTML += '<div style="background:#f0f7f0;padding:8px;border-radius:8px;margin:5px;"><b>'+L('Gia phả:','Family Tree:')+'</b><br>' + traLoi + '</div>';
   oHien.scrollTop = oHien.scrollHeight;
 }
-
 document.getElementById('chat-input').addEventListener('keypress', function(e){
   if(e.key === 'Enter') guiHoi();
 });
