@@ -1272,6 +1272,15 @@ if(LANG==='en' && k.includes('Mã Tờ')) tenCot = 'No. & Sheet Code';
     var giaTri = nguoi.thongtin[k];
     if(LANG==='en' && typeof giaTri === 'string'){
       giaTri = giaTri.replaceAll('Đời ', 'Generation ');
+	  giaTri = giaTri
+  .replaceAll('Con ngài ', 'Son of ')
+  .replaceAll('Con út ', 'Youngest son of ')
+  .replaceAll('Con trai ', 'Son ')
+  .replaceAll('Chính thất:', 'First wife:')
+  .replaceAll('Thứ thất:', 'Second wife:')
+  .replaceAll('tháng ', 'month ')
+  .replaceAll('Ông', 'Husband')
+  .replaceAll('Bà ', 'Wife ');
     }
     s += '• <b>' + tenCot + ':</b> ' + giaTri + '<br>';
   }
