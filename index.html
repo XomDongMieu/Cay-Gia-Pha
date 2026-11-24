@@ -1241,7 +1241,9 @@ async function taiTatCa(){
 function hienThiNguoi(nguoi){
   // Bảng dịch tên cột từ Google Sheet -> Tiếng Anh
   var dichCot = {
-    'STT & Mã Tờ (Anh1)': 'No. & Sheet Code',
+    'STT & Mã Tờ (Ảnh)': 'No. & Sheet Code',
+    'STT & Mã Tờ (Anh)': 'No. & Sheet Code',
+	'STT & Mã Tờ (Anh1)': 'No. & Sheet Code',
     'STT & Mã Tờ': 'No. & Sheet Code',
     'Thế Hệ (Đời)': 'Generation',
     'Thế Hệ': 'Generation',
@@ -1264,6 +1266,8 @@ function hienThiNguoi(nguoi){
     var tenCot = k;
     // Nếu đang chọn English và có trong bảng dịch thì dịch, không có thì giữ nguyên
     if(LANG==='en' && dichCot[k]) tenCot = dichCot[k];
+	if(LANG==='en' && k.includes('STT')) tenCot = 'No. & Sheet Code';
+if(LANG==='en' && k.includes('Mã Tờ')) tenCot = 'No. & Sheet Code';
     // Dịch chữ "Đời" trong giá trị, ví dụ "Đời 9 (chi2)" -> "Generation 9 (chi2)"
     var giaTri = nguoi.thongtin[k];
     if(LANG==='en' && typeof giaTri === 'string'){
@@ -1388,7 +1392,7 @@ async function guiHoi(){
     var tenCanTim3 = tu.replace(/la ai|\?/g,'').trim();
     var ketQua = timNguoi(tatCa, tenCanTim3);
     if(ketQua.length > 0){
-      traLoi = '🔍 ' + L('Tìm thấy ','Found ') + ketQua.length + L(' người tên giống <b>',' people with similar name <b>') + cauHoiGoc + '</b>:<br><br>';
+      traLoi = '🔍 ' + L('Tìm thấy ','Found ') + ketQua.length + (ketQua.length===1 ? L(' người tên giống <b>',' person named <b>') : L(' người tên giống <b>',' people named <b>')) + tenCanTim3 + '</b>:<br><br>';
       ketQua.forEach(n => traLoi += hienThiNguoi(n));
     } else {
       traLoi = L('Không tìm thấy ai tên <b>','No one named <b>') + cauHoiGoc + L('</b>! Bạn thử gõ <b>doi11</b> hoặc <b>Đời 11 có những ai?</b> nhé!','</b> was found! Try <b>doi11</b> or <b>Who is in Gen 11?</b>');
