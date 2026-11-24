@@ -1239,8 +1239,38 @@ async function taiTatCa(){
 }
 
 function hienThiNguoi(nguoi){
-  var s = '<b>=== ' + nguoi.ten + ' (Đời ' + nguoi.doi + ') ===</b><br>';
-  for(var k in nguoi.thongtin){ s += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
+  // Bảng dịch tên cột từ Google Sheet -> Tiếng Anh
+  var dichCot = {
+    'STT & Mã Tờ (Anh1)': 'No. & Sheet Code',
+    'STT & Mã Tờ': 'No. & Sheet Code',
+    'Thế Hệ (Đời)': 'Generation',
+    'Thế Hệ': 'Generation',
+    'Tên Chữ / Tên Tự / Tên Ý': 'Courtesy Name',
+    'Tên Huý / Tước Vị / Danh Hiệu': 'Taboo Name / Title',
+    'Chức Vị / Thân Thế': 'Position / Status',
+    'Ngày Kỵ Nhật (Giỗ Âm Lịch)': 'Death Anniversary (Lunar)',
+    'Mộ Phần (Xứ Đất)': 'Grave Location',
+    'Hiền Phối (Vợ / Chồng)': 'Spouse',
+    'Hậu Duệ (Con Trai / Con Gái)': 'Descendants (Children)',
+    'Chi Tiết Ghi Chú Gia Phả': 'Family Notes',
+    'Thân phụ (cha ruột)': 'Father',
+    'Thân Phụ': 'Father',
+    'Thân Mẫu': 'Mother'
+  };
+
+  var tieuDe = L('=== ' + nguoi.ten + ' (Đời ' + nguoi.doi + ') ===', '=== ' + nguoi.ten + ' (Generation ' + nguoi.doi + ') ===');
+  var s = '<b>' + tieuDe + '</b><br>';
+  for(var k in nguoi.thongtin){
+    var tenCot = k;
+    // Nếu đang chọn English và có trong bảng dịch thì dịch, không có thì giữ nguyên
+    if(LANG==='en' && dichCot[k]) tenCot = dichCot[k];
+    // Dịch chữ "Đời" trong giá trị, ví dụ "Đời 9 (chi2)" -> "Generation 9 (chi2)"
+    var giaTri = nguoi.thongtin[k];
+    if(LANG==='en' && typeof giaTri === 'string'){
+      giaTri = giaTri.replaceAll('Đời ', 'Generation ');
+    }
+    s += '• <b>' + tenCot + ':</b> ' + giaTri + '<br>';
+  }
   return s + '<br>';
 }
 
