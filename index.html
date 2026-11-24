@@ -1375,7 +1375,7 @@ async function guiHoi(){
     if(found.length>0){
       var nguoi = found[0];
       var kq = '';
-      for(var k in nguoi.thongtin){ if(chuanHoa(k).includes('than phu') || chuanHoa(k).includes('cha')) kq += '• <b>' + k + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
+      for(var k in nguoi.thongtin){ if(chuanHoa(k).includes('than phu') || chuanHoa(k).includes('cha')) kq += '• <b>' + L(k,'Father') + ':</b> ' + nguoi.thongtin[k] + '<br>'; }
       traLoi = '👨‍👦 <b>' + L('Cha của ','Father of ') + nguoi.ten + ':</b><br>' + (kq || L('Chưa có thông tin!','No information yet!'));
     } else traLoi = L('Không tìm thấy người tên ','No one named ') + tenCanTim + '!';
   }
@@ -1386,7 +1386,7 @@ async function guiHoi(){
     if(found2.length>0){
       var nguoi2 = found2[0];
       var kq2 = '';
-      for(var k2 in nguoi2.thongtin){ if(chuanHoa(k2).includes('hau due')) kq2 += '• <b>' + k2 + ':</b> ' + nguoi2.thongtin[k2] + '<br>'; }
+          for(var k2 in nguoi2.thongtin){ if(chuanHoa(k2).includes('hau due')) kq2 += '• <b>' + L(k2,'Descendants (Children)') + ':</b> ' + nguoi2.thongtin[k2] + '<br>'; }
       traLoi = '👨‍👧‍👦 <b>' + L('Con của ','Children of ') + nguoi2.ten + ':</b><br>' + (kq2 || L('Chưa có thông tin!','No information yet!'));
     } else traLoi = L('Không tìm thấy người tên ','No one named ') + tenCanTim2 + '!';
   }
