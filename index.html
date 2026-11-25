@@ -1100,28 +1100,25 @@ function chiaSeGiaPha(){
         var TITLE_VI=document.title, H1_VI=H1.textContent;
         MN.forEach(function(e){e.dataset.vi=e.textContent.trim()});
         var ORIG=NW.map(function(w){var b=w.querySelector('button'),n=w.querySelector('.node-title'),m=w.querySelector('.node-name'),t=w.querySelector('.tooltip-box'),tmp=t.cloneNode(true),p=tmp.querySelector('.pop-title'),pt=p.textContent;p.remove();return {b:b,bt:b?b.textContent:null,n:n,nt:n?n.textContent:null,m:m,mh:m?m.innerHTML:null,t:t,pt:pt,body:tmp.innerHTML}});
-        function capNhatChatbotUI(){
-  var t = document.getElementById('tieu-de-chatbot');
-  if(t) t.textContent = LANG==='en' ? 'Family Tree: Nguyen Duc Q&A' : 'Gia phả: Hỏi đáp họ Nguyễn Đức';
-  var g = document.getElementById('btn-gui');
-  if(g) g.textContent = LANG==='en' ? 'Send' : 'Gửi';
-  var o = document.getElementById('chat-input');
-  if(o) o.placeholder = LANG==='en' ? 'Ask about family tree...' : 'Hỏi về gia phả...';
+   function capNhatChatbotUI(){
+  try{
+    var t = document.getElementById('tieu-de-chatbot');
+    if(t) t.textContent = LANG==='en' ? 'Family Tree: Nguyen Duc Q&A' : 'Gia phả: Hỏi đáp họ Nguyễn Đức';
+    var g = document.getElementById('btn-gui');
+    if(g) g.textContent = LANG==='en' ? 'Send' : 'Gửi';
+    var o = document.getElementById('chat-input');
+    if(o) o.placeholder = LANG==='en' ? 'Ask about family tree...' : 'Hỏi về gia phả...';
+  }catch(e){}
 }
 function capNhatHuongDan(){
-  document.querySelectorAll('#box-huongdan [data-vi]').forEach(function(el){
-    el.textContent = LANG==='en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
-  });
+  try{
+    document.querySelectorAll('#box-huongdan [data-vi]').forEach(function(el){
+      el.textContent = LANG==='en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
+    });
+  }catch(e){}
 }
-function chonCau(btn){
-  var cau = LANG==='en' ? btn.getAttribute('data-en') : btn.getAttribute('data-vi');
-  var oNhap = document.getElementById('chat-input');
-  if(oNhap){ oNhap.value = cau; oNhap.focus(); dongHuongDan(); }
-  else { navigator.clipboard.writeText(cau); alert(LANG==='en' ? 'Copied: ' + cau : 'Đã copy: ' + cau); dongHuongDan(); }
-}
-function setLang(l,keep){
-		function setLang(l,keep){
-            LANG=l==='en'?'en':'vi';
+function setLang(l,keep){ LANG=l==='en'?'en':'vi';     
+		
             try{localStorage.setItem('lang',LANG)}catch(e){}
             document.documentElement.lang=LANG; SEL.value=LANG;
             document.title=L(TITLE_VI,'Nguyễn Đức Family Tree');
