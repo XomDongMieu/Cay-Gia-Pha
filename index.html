@@ -1484,57 +1484,38 @@ function chiaSeGiaPha(){
 </script>
 <!-- HỘP HƯỚNG DẪN -->
 <div id="overlay" onclick="if(event.target===this) dongHuongDan()">
-<div id="box-huongdan">
-<button id="btn-dong" onclick="dongHuongDan()">✕</button>
-<h2>📜 <span data-vi="Hướng dẫn hỏi Chatbot Gia phả" data-en="How to Ask the Family Tree Chatbot">Hướng dẫn hỏi Chatbot Gia phả</span></h2>
-<p class="mo-ta" data-vi="Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!" data-en="Just type like normal conversation. Click a sample question below to auto-fill the chat box!">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
+<div id="box-huongdan" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10001; align-items:center; justify-content:center;">
+<div style="background:#fff; width:92%; max-width:520px; max-height:85vh; overflow-y:auto; border-radius:12px; padding:20px; position:relative;">
+<button onclick="dongHuongDan()" style="position:absolute; top:10px; right:12px; border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
+<h3 data-vi="📜 Hướng dẫn hỏi Chatbot Gia phả" data-en="📜 Family Tree Chatbot Guide">📜 Hướng dẫn hỏi Chatbot Gia phả</h3>
+<p data-vi="Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!" data-en="Just type as you normally speak. Tap a sample question below to auto-fill the chat box!">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
 
-<div class="nhom">
-  <h3 data-vi="1. Xem 1 đời" data-en="1. View a Generation">1. Xem 1 đời</h3>
-  <div class="vi-du">
-    <button data-vi="doi11" data-en="doi11" onclick="chonCau(this)">doi11</button>
-    <button data-vi="Đời 9 có những ai?" data-en="Who is in Gen 9?" onclick="chonCau(this)">Đời 9 có những ai?</button>
-    <button data-vi="đời 9 là ai" data-en="Who is in Gen 9?" onclick="chonCau(this)">đời 9 là ai</button>
-  </div>
-</div>
+<b data-vi="1. Xem 1 đời" data-en="1. View 1 generation">1. Xem 1 đời</b><br>
+<button onclick="chonCau(this)" data-vi="doi11" data-en="gen11">doi11</button>
+<button onclick="chonCau(this)" data-vi="Đời 9 có những ai?" data-en="Who is in Gen 9?">Đời 9 có những ai?</button>
+<button onclick="chonCau(this)" data-vi="đời 9 là ai" data-en="who is in gen 9">đời 9 là ai</button><br><br>
 
-<div class="nhom">
-  <h3 data-vi="2. Hỏi con của 1 đời" data-en="2. Ask children of a Generation">2. Hỏi con của 1 đời</h3>
-  <div class="vi-du">
-    <button data-vi="con đời 9 là ai" data-en="Children of Gen 9" onclick="chonCau(this)">con đời 9 là ai</button>
-    <button data-vi="đời 9 có con ai" data-en="Children of Gen 9" onclick="chonCau(this)">đời 9 có con ai</button>
-  </div>
-</div>
+<b data-vi="2. Hỏi con của 1 đời" data-en="2. Ask children of 1 generation">2. Hỏi con của 1 đời</b><br>
+<button onclick="chonCau(this)" data-vi="con đời 9 là ai" data-en="children of gen 9">con đời 9 là ai</button>
+<button onclick="chonCau(this)" data-vi="đời 9 có con ai" data-en="children of gen 9">đời 9 có con ai</button><br><br>
 
-<div class="nhom">
-  <h3 data-vi="3. Hỏi 1 người" data-en="3. Ask about a person">3. Hỏi 1 người</h3>
-  <div class="vi-du">
-    <button data-vi="Đức Thái là ai?" data-en="Who is Duc Thai?" onclick="chonCau(this)">Đức Thái là ai?</button>
-    <button data-vi="Đức Mùi là ai?" data-en="Who is Duc Mui?" onclick="chonCau(this)">Đức Mùi là ai?</button>
-    <button data-vi="Đức Thung là ai?" data-en="Who is Duc Thung?" onclick="chonCau(this)">Đức Thung là ai?</button>
-  </div>
-</div>
+<b data-vi="3. Hỏi 1 người" data-en="3. Ask about 1 person">3. Hỏi 1 người</b><br>
+<button onclick="chonCau(this)" data-vi="Đức Thái là ai?" data-en="Who is Duc Thai?">Đức Thái là ai?</button>
+<button onclick="chonCau(this)" data-vi="Đức Mùi là ai?" data-en="Who is Duc Mui?">Đức Mùi là ai?</button>
+<button onclick="chonCau(this)" data-vi="Đức Thung là ai?" data-en="Who is Duc Thung?">Đức Thung là ai?</button><br><br>
 
-<div class="nhom">
-  <h3 data-vi="4. Hỏi cha / con của 1 người" data-en="4. Ask father / children of a person">4. Hỏi cha / con của 1 người</h3>
-  <div class="vi-du">
-    <button data-vi="Cha của Đức Thung là ai?" data-en="Father of Duc Thung" onclick="chonCau(this)">Cha của Đức Thung là ai?</button>
-    <button data-vi="Con của Đức Do là ai?" data-en="Children of Duc Do" onclick="chonCau(this)">Con của Đức Do là ai?</button>
-    <button data-vi="Con của Đức Từ là ai?" data-en="Children of Duc Tu" onclick="chonCau(this)">Con của Đức Từ là ai?</button>
-  </div>
-</div>
+<b data-vi="4. Hỏi cha / con của 1 người" data-en="4. Ask father / children of 1 person">4. Hỏi cha / con của 1 người</b><br>
+<button onclick="chonCau(this)" data-vi="Cha của Đức Thung là ai?" data-en="Who is the father of Duc Thung?">Cha của Đức Thung là ai?</button>
+<button onclick="chonCau(this)" data-vi="Con của Đức Do là ai?" data-en="Children of Duc Do">Con của Đức Do là ai?</button>
+<button onclick="chonCau(this)" data-vi="Con của Đức Từ là ai?" data-en="Children of Duc Tu">Con của Đức Từ là ai?</button><br><br>
 
-<div class="luu-y">
-  <b>💡 <span data-vi="Lưu ý:" data-en="Note:">Lưu ý:</span></b><br>
-  <span data-vi="• Có chữ “con” → Hỏi con của đời đó / người đó." data-en="• With “children” → Ask children of that generation / person.">• Có chữ “con” → Hỏi con của đời đó / người đó.</span><br>
-  <span data-vi="• Không có chữ “con” → Hỏi người của đời đó." data-en="• Without it → Ask people of that generation.">• Không có chữ “con” → Hỏi người của đời đó.</span><br>
-  <span data-vi="• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10)." data-en="• Example: “Who is in Gen 9?” asks Gen 9, “Children of Gen 9” asks children of Gen 9 (i.e. Gen 10).">• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10).</span><br>
-  <span data-vi="• Gõ không dấu cũng được: doi9, duc thai la ai?" data-en="• No accent is also OK: doi9, duc thai la ai?">• Gõ không dấu cũng được: doi9, duc thai la ai?</span>
-</div>
+<div style="background:#fffbe6; padding:10px; border-radius:8px;">
+<b data-vi="💡 Lưu ý:" data-en="💡 Note:">💡 Lưu ý:</b>
+<p data-vi="• Có chữ “con” → Hỏi con của đời đó / người đó. • Không có chữ “con” → Hỏi người của đời đó. • Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10). • Gõ không dấu cũng được: doi9, duc thai la ai?" data-en="• With 'children' → Ask children of that generation / person. • Without 'children' → Ask people of that generation. • Example: 'Who is in Gen 9?' asks Gen 9, 'children of gen 9' asks children of Gen 9 (i.e. Gen 10). • Typing without accents works: gen9, who is duc thai?">• Có chữ “con” → Hỏi con của đời đó / người đó. • Không có chữ “con” → Hỏi người của đời đó. • Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10). • Gõ không dấu cũng được: doi9, duc thai la ai?</p>
 
 </div>
-</div>
-</body>
-</html>
-</body>
-</html>
+ </div>
+ </div> 
+ </div> 
+ </body> 
+ </html>
