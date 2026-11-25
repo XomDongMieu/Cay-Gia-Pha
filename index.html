@@ -1100,7 +1100,27 @@ function chiaSeGiaPha(){
         var TITLE_VI=document.title, H1_VI=H1.textContent;
         MN.forEach(function(e){e.dataset.vi=e.textContent.trim()});
         var ORIG=NW.map(function(w){var b=w.querySelector('button'),n=w.querySelector('.node-title'),m=w.querySelector('.node-name'),t=w.querySelector('.tooltip-box'),tmp=t.cloneNode(true),p=tmp.querySelector('.pop-title'),pt=p.textContent;p.remove();return {b:b,bt:b?b.textContent:null,n:n,nt:n?n.textContent:null,m:m,mh:m?m.innerHTML:null,t:t,pt:pt,body:tmp.innerHTML}});
-        function setLang(l,keep){
+        function capNhatChatbotUI(){
+  var t = document.getElementById('tieu-de-chatbot');
+  if(t) t.textContent = LANG==='en' ? 'Family Tree: Nguyen Duc Q&A' : 'Gia phả: Hỏi đáp họ Nguyễn Đức';
+  var g = document.getElementById('btn-gui');
+  if(g) g.textContent = LANG==='en' ? 'Send' : 'Gửi';
+  var o = document.getElementById('chat-input');
+  if(o) o.placeholder = LANG==='en' ? 'Ask about family tree...' : 'Hỏi về gia phả...';
+}
+function capNhatHuongDan(){
+  document.querySelectorAll('#box-huongdan [data-vi]').forEach(function(el){
+    el.textContent = LANG==='en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
+  });
+}
+function chonCau(btn){
+  var cau = LANG==='en' ? btn.getAttribute('data-en') : btn.getAttribute('data-vi');
+  var oNhap = document.getElementById('chat-input');
+  if(oNhap){ oNhap.value = cau; oNhap.focus(); dongHuongDan(); }
+  else { navigator.clipboard.writeText(cau); alert(LANG==='en' ? 'Copied: ' + cau : 'Đã copy: ' + cau); dongHuongDan(); }
+}
+function setLang(l,keep){
+		function setLang(l,keep){
             LANG=l==='en'?'en':'vi';
             try{localStorage.setItem('lang',LANG)}catch(e){}
             document.documentElement.lang=LANG; SEL.value=LANG;
@@ -1120,6 +1140,8 @@ function chiaSeGiaPha(){
                 o.t.innerHTML='<div class="pop-title">'+(e?e[2]:o.pt)+'</div>'+(e?e[3]:o.body)});
             if(!document.body.classList.contains('inview'))refreshTree(false);
             if(!keep)showView(curV);
+			capNhatChatbotUI();
+            capNhatHuongDan();
 			  // Cho chatbot tự động theo ngôn ngữ mới
   try{
     if(typeof CHAT !== 'undefined' && typeof renderChat === 'function'){
@@ -1437,13 +1459,16 @@ function shareGiaPha() {
 <script>
 function moHuongDan(){ document.getElementById('overlay').classList.add('show'); }
 function dongHuongDan(){ document.getElementById('overlay').classList.remove('show'); }
-function chonCau(cau){
+function chonCau(btn){
+  var cau = LANG==='en' ? btn.getAttribute('data-en') : btn.getAttribute('data-vi');
   var oNhap = document.getElementById('chat-input');
-  if(oNhap){
-    oNhap.value = cau;
-    oNhap.focus();
-    dongHuongDan();
-  }
+  if(oNhap){ oNhap.value = cau; oNhap.focus(); dongHuongDan(); }
+  else { navigator.clipboard.writeText(cau); alert(LANG==='en' ? 'Copied: ' + cau : 'Đã copy: ' + cau); dongHuongDan(); }
+}
+function capNhatHuongDan(){
+  document.querySelectorAll('#box-huongdan [data-vi]').forEach(function(el){
+    el.textContent = LANG==='en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
+  });
 }
 </script>
 <script>
@@ -1462,49 +1487,55 @@ function chiaSeGiaPha(){
 </script>
 <!-- HỘP HƯỚNG DẪN -->
 <div id="overlay" onclick="if(event.target===this) dongHuongDan()">
-  <div id="box-huongdan">
-    <button id="btn-dong" onclick="dongHuongDan()">✕</button>
-    <h2>📜 Hướng dẫn hỏi Chatbot Gia phả</h2>
-    <p class="mo-ta">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
-    <div class="nhom">
-      <h3>1. Xem 1 đời</h3>
-      <div class="vi-du">
-        <button onclick="chonCau('doi11')">doi11</button>
-        <button onclick="chonCau('Đời 9 có những ai?')">Đời 9 có những ai?</button>
-        <button onclick="chonCau('đời 9 là ai')">đời 9 là ai</button>
-      </div>
-    </div>
-    <div class="nhom">
-      <h3>2. Hỏi con của 1 đời</h3>
-      <div class="vi-du">
-        <button onclick="chonCau('con đời 9 là ai')">con đời 9 là ai</button>
-        <button onclick="chonCau('đời 9 có con ai')">đời 9 có con ai</button>
-      </div>
-    </div>
-    <div class="nhom">
-      <h3>3. Hỏi 1 người</h3>
-      <div class="vi-du">
-        <button onclick="chonCau('Đức Thái là ai?')">Đức Thái là ai?</button>
-        <button onclick="chonCau('Đức Mùi là ai?')">Đức Mùi là ai?</button>
-        <button onclick="chonCau('Đức Thung là ai?')">Đức Thung là ai?</button>
-      </div>
-    </div>
-    <div class="nhom">
-      <h3>4. Hỏi cha / con của 1 người</h3>
-      <div class="vi-du">
-        <button onclick="chonCau('Cha của Đức Thung là ai?')">Cha của Đức Thung là ai?</button>
-        <button onclick="chonCau('Con của Đức Do là ai?')">Con của Đức Do là ai?</button>
-        <button onclick="chonCau('Con của Đức Từ là ai?')">Con của Đức Từ là ai?</button>
-      </div>
-    </div>
-    <div class="luu-y">
-      <b>💡 Lưu ý:</b><br>
-      • Có chữ <b>“con”</b> → Hỏi <b>con</b> của đời đó / người đó.<br>
-      • Không có chữ “con” → Hỏi <b>người của đời đó</b>.<br>
-      • Ví dụ: <b>“Đời 9 có những ai?”</b> là hỏi Đời 9, còn <b>“con đời 9 là ai”</b> là hỏi con của Đời 9 (tức Đời 10).<br>
-      • Gõ không dấu cũng được: <b>doi9, duc thai la ai?</b>
-    </div>
+<div id="box-huongdan">
+<button id="btn-dong" onclick="dongHuongDan()">✕</button>
+<h2>📜 <span data-vi="Hướng dẫn hỏi Chatbot Gia phả" data-en="How to Ask the Family Tree Chatbot">Hướng dẫn hỏi Chatbot Gia phả</span></h2>
+<p class="mo-ta" data-vi="Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!" data-en="Just type like normal conversation. Click a sample question below to auto-fill the chat box!">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
+
+<div class="nhom">
+  <h3 data-vi="1. Xem 1 đời" data-en="1. View a Generation">1. Xem 1 đời</h3>
+  <div class="vi-du">
+    <button data-vi="doi11" data-en="doi11" onclick="chonCau(this)">doi11</button>
+    <button data-vi="Đời 9 có những ai?" data-en="Who is in Gen 9?" onclick="chonCau(this)">Đời 9 có những ai?</button>
+    <button data-vi="đời 9 là ai" data-en="Who is in Gen 9?" onclick="chonCau(this)">đời 9 là ai</button>
   </div>
+</div>
+
+<div class="nhom">
+  <h3 data-vi="2. Hỏi con của 1 đời" data-en="2. Ask children of a Generation">2. Hỏi con của 1 đời</h3>
+  <div class="vi-du">
+    <button data-vi="con đời 9 là ai" data-en="Children of Gen 9" onclick="chonCau(this)">con đời 9 là ai</button>
+    <button data-vi="đời 9 có con ai" data-en="Children of Gen 9" onclick="chonCau(this)">đời 9 có con ai</button>
+  </div>
+</div>
+
+<div class="nhom">
+  <h3 data-vi="3. Hỏi 1 người" data-en="3. Ask about a person">3. Hỏi 1 người</h3>
+  <div class="vi-du">
+    <button data-vi="Đức Thái là ai?" data-en="Who is Duc Thai?" onclick="chonCau(this)">Đức Thái là ai?</button>
+    <button data-vi="Đức Mùi là ai?" data-en="Who is Duc Mui?" onclick="chonCau(this)">Đức Mùi là ai?</button>
+    <button data-vi="Đức Thung là ai?" data-en="Who is Duc Thung?" onclick="chonCau(this)">Đức Thung là ai?</button>
+  </div>
+</div>
+
+<div class="nhom">
+  <h3 data-vi="4. Hỏi cha / con của 1 người" data-en="4. Ask father / children of a person">4. Hỏi cha / con của 1 người</h3>
+  <div class="vi-du">
+    <button data-vi="Cha của Đức Thung là ai?" data-en="Father of Duc Thung" onclick="chonCau(this)">Cha của Đức Thung là ai?</button>
+    <button data-vi="Con của Đức Do là ai?" data-en="Children of Duc Do" onclick="chonCau(this)">Con của Đức Do là ai?</button>
+    <button data-vi="Con của Đức Từ là ai?" data-en="Children of Duc Tu" onclick="chonCau(this)">Con của Đức Từ là ai?</button>
+  </div>
+</div>
+
+<div class="luu-y">
+  <b>💡 <span data-vi="Lưu ý:" data-en="Note:">Lưu ý:</span></b><br>
+  <span data-vi="• Có chữ “con” → Hỏi con của đời đó / người đó." data-en="• With “children” → Ask children of that generation / person.">• Có chữ “con” → Hỏi con của đời đó / người đó.</span><br>
+  <span data-vi="• Không có chữ “con” → Hỏi người của đời đó." data-en="• Without it → Ask people of that generation.">• Không có chữ “con” → Hỏi người của đời đó.</span><br>
+  <span data-vi="• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10)." data-en="• Example: “Who is in Gen 9?” asks Gen 9, “Children of Gen 9” asks children of Gen 9 (i.e. Gen 10).">• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10).</span><br>
+  <span data-vi="• Gõ không dấu cũng được: doi9, duc thai la ai?" data-en="• No accent is also OK: doi9, duc thai la ai?">• Gõ không dấu cũng được: doi9, duc thai la ai?</span>
+</div>
+
+</div>
 </div>
 </body>
 </html>
