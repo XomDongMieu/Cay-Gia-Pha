@@ -222,17 +222,21 @@ if(localStorage.getItem('da_dang_nhap_gia_pha')==='1'){
 }
 </script>
 <!-- NÚT CHIA SẺ LUÔN HIỆN -->
-<button onclick="chiaSeGiaPha()" style="position:fixed;top:10px;right:10px;z-index:9999;background:#1e88e5;color:white;border:2px solid white;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;">📤 Chia sẻ</button>
+<button id="nut-chia-se" type="button" onclick="chiaSeGiaPha()" style="position:fixed;top:10px;right:10px;z-index:9999;background:#1e88e5;color:white;border:2px solid white;padding:8px 14px;border-radius:20px;font-weight:bold;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;">📤 Chia sẻ</button>
 
 <script>
 function chiaSeGiaPha(){
-  var link = 'https://xomdongmieu.github.io/Cay-Gia-Pha/';
-  var text = 'Gia phả họ Nguyễn Đức - Kính mời bà con vào xem và góp ý ạ! ';
+  var en = (typeof LANG !== 'undefined' && LANG === 'en');
+  var link = 'https://xomdongmieu.github.io/Cay-Gia-Pha/' + (en ? '?lang=en' : '');
+  var title = en ? 'Nguyễn Đức Family Tree' : 'Gia phả họ Nguyễn Đức';
+  var text = en ? 'Nguyễn Đức Family Tree - You are warmly invited to visit and share your feedback! '
+                : 'Gia phả họ Nguyễn Đức - Kính mời bà con vào xem và góp ý ạ! ';
   if(navigator.share){
-    navigator.share({title:'Gia phả họ Nguyễn Đức', text:text, url:link}).catch(()=>{});
+    navigator.share({title:title, text:text, url:link}).catch(()=>{});
   } else {
     navigator.clipboard.writeText(text + link).then(()=>{
-      alert('Đã copy link! Bạn dán vào Zalo để gửi cho bà con nhé!');
+      alert(en ? 'Link copied! Paste it into Zalo, Messenger or any chat to send to relatives.'
+               : 'Đã copy link! Bạn dán vào Zalo để gửi cho bà con nhé!');
     });
   }
 }
@@ -1108,6 +1112,14 @@ function chiaSeGiaPha(){
     if(g) g.textContent = LANG==='en' ? 'Send' : 'Gửi';
     var o = document.getElementById('chat-input');
     if(o) o.placeholder = LANG==='en' ? 'Ask about family tree...' : 'Hỏi về gia phả...';
+    var sh = document.getElementById('nut-chia-se');
+    if(sh) sh.textContent = LANG==='en' ? '📤 Share' : '📤 Chia sẻ';
+    var cb = document.getElementById('chat-box');
+    if(cb){
+      var b1 = cb.querySelector('[onclick="thuNhoChat()"]'); if(b1) b1.title = LANG==='en' ? 'Minimize' : 'Thu nhỏ';
+      var b2 = cb.querySelector('[onclick="tatChat()"]'); if(b2) b2.title = LANG==='en' ? 'Close' : 'Tắt';
+      var b3 = cb.querySelector('[onclick="moHuongDan()"]'); if(b3) b3.title = LANG==='en' ? 'User guide' : 'Hướng dẫn sử dụng';
+    }
   }catch(e){}
 }
 function capNhatHuongDan(){
@@ -1183,7 +1195,6 @@ function setLang(l,keep){ LANG=l==='en'?'en':'vi';
 <button type="button" onclick="moHuongDan()" style="margin-left:6px; background:#ffc107; color:#000; border:none; width:36px; height:36px; border-radius:50%; font-weight:bold; font-size:18px; cursor:pointer;flex-shrink:0;" title="Hướng dẫn sử dụng">?</button>
 </div>
   </div>
-</div>
 
 <script>// HÀM HIỂU GÕ KHÔNG DẤU: Doi 11 = Đời 11, Duc Thai = Đức Thái
 function boDau(str) {
@@ -1219,42 +1230,73 @@ function chuanHoa(txt){
 }
 function chuanHoaKhongKhoang(txt){ return chuanHoa(txt).replace(/\s+/g,''); }
 
-async function taiTatCa(){
-  if(CACHE_TAT_CA) return CACHE_TAT_CA;
-  CACHE_TAT_CA = [];
-  for(var d=1; d<=20; d++){
-    var tenTab = 'Doi' + d;
-    try{
-      var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID_GIA_PHA + '/gviz/tq?tqx=out:json&sheet=' + tenTab;
-      var res = await fetch(url);
-      var text = await res.text();
-      var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-      var rows = json.table.rows;
-      var idxHeader = -1, tenNguoi = [];
-      for(var i=0;i<rows.length;i++){
-        var c0 = rows[i].c[0] ? String(rows[i].c[0].v) : '';
-        if(c0.toUpperCase().includes('THUỘC TÍNH')){
-          idxHeader = i;
-          for(var j=1;j<rows[i].c.length;j++){
-            if(rows[i].c[j] && rows[i].c[j].v) tenNguoi.push(String(rows[i].c[j].v));
-          }
-          break;
+var PROMISE_TAT_CA = null;
+async function taiMotDoi(d){
+  var tenTab = 'Doi' + d, kq = [];
+  try{
+    var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID_GIA_PHA + '/gviz/tq?tqx=out:json&sheet=' + tenTab;
+    var res = await fetch(url);
+    var text = await res.text();
+    var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+    var rows = json.table.rows;
+    var idxHeader = -1, tenNguoi = [];
+    for(var i=0;i<rows.length;i++){
+      var c0 = rows[i].c[0] ? String(rows[i].c[0].v) : '';
+      if(c0.toUpperCase().includes('THUỘC TÍNH')){
+        idxHeader = i;
+        for(var j=1;j<rows[i].c.length;j++){
+          if(rows[i].c[j] && rows[i].c[j].v) tenNguoi.push(String(rows[i].c[j].v));
         }
+        break;
       }
-      if(idxHeader === -1) continue;
-      for(var k=0;k<tenNguoi.length;k++){
-        var col = k+1;
-        var nguoi = { ten: tenNguoi[k], doi: d, thongtin: {} };
-        for(var r=idxHeader+1; r<rows.length; r++){
-          var tt = rows[r].c[0] ? String(rows[r].c[0].v).trim() : '';
-          var gt = (rows[r].c[col] && rows[r].c[col].v) ? String(rows[r].c[col].v).trim() : '';
-          if(tt) nguoi.thongtin[tt] = gt || '—';
-        }
-        CACHE_TAT_CA.push(nguoi);
+    }
+    if(idxHeader === -1){ console.warn('Chatbot: tab ' + tenTab + ' không có dòng "THUỘC TÍNH"'); return kq; }
+    for(var k=0;k<tenNguoi.length;k++){
+      var col = k+1;
+      var nguoi = { ten: tenNguoi[k], doi: d, thongtin: {} };
+      for(var r=idxHeader+1; r<rows.length; r++){
+        var tt = rows[r].c[0] ? String(rows[r].c[0].v).trim() : '';
+        var gt = (rows[r].c[col] && rows[r].c[col].v) ? String(rows[r].c[col].v).trim() : '';
+        if(tt) nguoi.thongtin[tt] = gt || '—';
       }
-    }catch(e){}
-  }
-  return CACHE_TAT_CA;
+      kq.push(nguoi);
+    }
+  }catch(e){ console.warn('Chatbot: không tải được tab ' + tenTab, e); }
+  return kq;
+}
+// Tải song song 20 tab; chờ đủ rồi mới trả về (không còn trả mảng rỗng khi đang tải dở).
+function taiTatCa(){
+  if(CACHE_TAT_CA && CACHE_TAT_CA.length) return Promise.resolve(CACHE_TAT_CA);
+  if(PROMISE_TAT_CA) return PROMISE_TAT_CA;
+  var ds = [];
+  for(var d=1; d<=20; d++) ds.push(taiMotDoi(d));
+  PROMISE_TAT_CA = Promise.all(ds).then(function(mang){
+    var tong = [].concat.apply([], mang);
+    if(tong.length) CACHE_TAT_CA = tong;   // chỉ nhớ khi tải được; nếu không thì lần hỏi sau thử lại
+    PROMISE_TAT_CA = null;
+    return tong;
+  });
+  return PROMISE_TAT_CA;
+}
+// Đời nào Google Sheet không có dữ liệu thì lấy từ bảng ROWS có sẵn trong trang.
+function boSungTuROWS(tatCa){
+  try{
+    if(typeof ROWS === 'undefined') return tatCa;
+    var co = {}; tatCa.forEach(function(n){ co[n.doi] = 1; });
+    var src = (LANG==='en' && typeof ROWS_EN !== 'undefined') ? ROWS_EN : ROWS;
+    var them = [];
+    src.forEach(function(r){
+      var d = parseInt(r[1], 10);
+      if(!d || co[d]) return;
+      them.push({ ten: r[0], doi: d, thongtin: {
+        'Thế Hệ (Đời)': r[1],
+        'Hiền Phối (Vợ / Chồng)': r[2],
+        'Hậu Duệ (Con Trai / Con Gái)': r[3],
+        'Chi Tiết Ghi Chú Gia Phả': r[4]
+      }});
+    });
+    return tatCa.concat(them);
+  }catch(e){ return tatCa; }
 }
 
 function hienThiNguoi(nguoi){
@@ -1328,20 +1370,30 @@ async function guiHoi(){
 
   // --- DỊCH CÂU HỎI TIẾNG ANH SANG MẪU TIẾNG VIỆT ĐỂ TRA CỨU ---
   if(LANG==='en'){
-    // generation 11 / gen 11 / who is in generation 11
-    if(tu.includes('generation') || /^gen\s*\d+/.test(tu)){
-      var mGen = tu.match(/\d+/);
-      if(mGen) tu = 'doi ' + mGen[0] + ' co nhung ai';
-      tuKhongKhoang = 'doi' + (mGen ? mGen[0] : '');
+    var mGen = tu.match(/(?:generation|gen)\.?\s*(\d+)/);
+    // children of gen 9 / gen 9 children / who are the children of generation 9
+    if(mGen && /child|descend|\bson|\bkids?\b/.test(tu)){
+      tu = 'doi ' + mGen[1] + ' co con ai';
+      tuKhongKhoang = chuanHoaKhongKhoang(tu);
+    }
+    // gen 11 / generation 11 (chỉ gõ riêng) -> xem chi tiết cả đời, như doi11
+    else if(mGen && /^(generation|gen)\.?\s*\d+\s*\??$/.test(tu)){
+      tu = 'doi ' + mGen[1];
+      tuKhongKhoang = 'doi' + mGen[1];
+    }
+    // who is in gen 9 / who is in generation 9 / list gen 9
+    else if(mGen){
+      tu = 'doi ' + mGen[1] + ' co nhung ai';
+      tuKhongKhoang = chuanHoaKhongKhoang(tu);
     }
     // who are children of Duc Thung / children of Duc Thung
     else if(tu.includes('children of') || tu.includes('child of') || tu.includes('descendants of')){
-      var tChild = tu.replace(/who are|who is|children of|child of|descendants of|are|\?/g,'').trim();
+      var tChild = tu.replace(/\b(who|are|is|the|children of|child of|descendants of)\b|\?/g,' ').replace(/\s+/g,' ').trim();
       tu = 'con cua ' + tChild;
     }
     // who is father of Duc Thung / father of Duc Thung
     else if(tu.includes('father of') || tu.includes('dad of')){
-      var tCha = tu.replace(/who is|father of|dad of|is|\?/g,'').trim();
+      var tCha = tu.replace(/\b(who|is|the|father of|dad of)\b|\?/g,' ').replace(/\s+/g,' ').trim();
       tu = 'cha cua ' + tCha;
     }
     // who is Duc Thai?
@@ -1354,7 +1406,7 @@ async function guiHoi(){
   }
 
   var traLoi = '';
-  var tatCa = await taiTatCa();
+  var tatCa = boSungTuROWS(await taiTatCa());
 
   // 1) doi11
   if(/^doi\d+$/.test(tuKhongKhoang)){
@@ -1370,6 +1422,7 @@ async function guiHoi(){
     var soDoiCon = mCon ? mCon[1] : '';
     var dsCha = tatCa.filter(n => String(n.doi) === soDoiCon);
     traLoi = L('👨‍👧‍👦 <b>Con của Đời ','👨‍👧‍👦 <b>Children of Generation ') + soDoiCon + ':</b><br><br>';
+    if(dsCha.length===0) traLoi += L('Đời này chưa có dữ liệu!','No data for this generation yet!') + '<br>';
     dsCha.forEach(n => {
       var hauDue = '';
       for(var k in n.thongtin){ if(chuanHoa(k).includes('hau due')) hauDue = n.thongtin[k]; }
@@ -1378,14 +1431,14 @@ async function guiHoi(){
     var doiSau = parseInt(soDoiCon) + 1;
     var dsSau = tatCa.filter(n => String(n.doi) === String(doiSau));
     if(dsSau.length>0){
-      traLoi += '<br>📜 <b>' + L('=> Chính là Đời ','=> That is Generation ') + doiSau + L(' có ',' has ') + dsSau.length + L(' người:',' people:') + '</b><br>' + dsSau.map(n => '• ' + n.ten).join('<br>');
+      traLoi += '<br>📜 <b>' + L('=> Chính là Đời ','=> That is Generation ') + doiSau + L(' có ',' has ') + dsSau.length + L(' người:',dsSau.length===1?' person:':' people:') + '</b><br>' + dsSau.map(n => '• ' + n.ten).join('<br>');
     }
   }
   else if(tu.includes('doi') && (tu.includes('co nhung ai') || tu.includes('gom nhung ai') || tu.includes('nhung ai') || tu.includes('con') || tu.includes('la ai')) && !tu.includes('cha cua') && !tu.includes('con cua')){
     var m = tu.match(/doi\s*(\d+)/);
     var soDoi2 = m ? m[1] : '';
     var ds2 = tatCa.filter(n => String(n.doi) === soDoi2);
-    traLoi = '📜 <b>' + L('Đời ','Generation ') + soDoi2 + L(' có ',' has ') + ds2.length + L(' người:',' people:') + '</b><br><br>' + ds2.map(n => '• ' + n.ten).join('<br>');
+    traLoi = '📜 <b>' + L('Đời ','Generation ') + soDoi2 + L(' có ',' has ') + ds2.length + L(' người:',ds2.length===1?' person:':' people:') + '</b><br><br>' + ds2.map(n => '• ' + n.ten).join('<br>');
   }
   // 3) Cha của Đức Thung là ai?
   else if(tu.includes('cha cua') || tu.includes('than phu') || tu.includes('bo cua')){
@@ -1446,76 +1499,76 @@ function shareGiaPha() {
 }
 </script>
 
-<!-- BẢNG HƯỚNG DẪN - Lấy từ file huong-dan.html -->
-<div id="bang-huong-dan" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10000; justify-content:center; align-items:center;">
-  <div id="noi-dung-huong-dan" style="background:white; width:92%; max-width:520px; max-height:85%; overflow-y:auto; border-radius:12px; padding:18px; position:relative;">
-    Đang tải hướng dẫn...
+<!-- HỘP HƯỚNG DẪN CHATBOT (mở bằng nút ? trong khung chat) -->
+<div id="overlay" onclick="if(event.target===this) dongHuongDan()">
+<div id="box-huongdan">
+<button type="button" id="btn-dong" onclick="dongHuongDan()" title="Đóng">✕</button>
+<h2 data-vi="📜 Hướng dẫn hỏi Chatbot Gia phả" data-en="📜 Family Tree Chatbot Guide">📜 Hướng dẫn hỏi Chatbot Gia phả</h2>
+<p class="mo-ta" data-vi="Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!" data-en="Just type as you normally speak. Tap a sample question below to auto-fill the chat box!">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
+
+<div class="nhom">
+  <h3 data-vi="1. Xem 1 đời" data-en="1. View 1 generation">1. Xem 1 đời</h3>
+  <div class="vi-du">
+    <button type="button" onclick="chonCau(this)" data-vi="doi11" data-en="gen11">doi11</button>
+    <button type="button" onclick="chonCau(this)" data-vi="Đời 9 có những ai?" data-en="Who is in Gen 9?">Đời 9 có những ai?</button>
+    <button type="button" onclick="chonCau(this)" data-vi="đời 9 là ai" data-en="who is in gen 9">đời 9 là ai</button>
   </div>
 </div>
 
+<div class="nhom">
+  <h3 data-vi="2. Hỏi con của 1 đời" data-en="2. Ask children of 1 generation">2. Hỏi con của 1 đời</h3>
+  <div class="vi-du">
+    <button type="button" onclick="chonCau(this)" data-vi="con đời 9 là ai" data-en="children of gen 9">con đời 9 là ai</button>
+    <button type="button" onclick="chonCau(this)" data-vi="đời 9 có con ai" data-en="children of gen 9">đời 9 có con ai</button>
+  </div>
+</div>
+
+<div class="nhom">
+  <h3 data-vi="3. Hỏi 1 người" data-en="3. Ask about 1 person">3. Hỏi 1 người</h3>
+  <div class="vi-du">
+    <button type="button" onclick="chonCau(this)" data-vi="Đức Thái là ai?" data-en="Who is Duc Thai?">Đức Thái là ai?</button>
+    <button type="button" onclick="chonCau(this)" data-vi="Đức Mùi là ai?" data-en="Who is Duc Mui?">Đức Mùi là ai?</button>
+    <button type="button" onclick="chonCau(this)" data-vi="Đức Thung là ai?" data-en="Who is Duc Thung?">Đức Thung là ai?</button>
+  </div>
+</div>
+
+<div class="nhom">
+  <h3 data-vi="4. Hỏi cha / con của 1 người" data-en="4. Ask father / children of 1 person">4. Hỏi cha / con của 1 người</h3>
+  <div class="vi-du">
+    <button type="button" onclick="chonCau(this)" data-vi="Cha của Đức Thung là ai?" data-en="Who is the father of Duc Thung?">Cha của Đức Thung là ai?</button>
+    <button type="button" onclick="chonCau(this)" data-vi="Con của Đức Do là ai?" data-en="Children of Duc Do">Con của Đức Do là ai?</button>
+    <button type="button" onclick="chonCau(this)" data-vi="Con của Đức Từ là ai?" data-en="Children of Duc Tu">Con của Đức Từ là ai?</button>
+  </div>
+</div>
+
+<div class="luu-y">
+  <b>💡 <span data-vi="Lưu ý:" data-en="Note:">Lưu ý:</span></b><br>
+  <span data-vi="• Có chữ “con” → Hỏi con của đời đó / người đó." data-en="• With “children” → Ask children of that generation / person.">• Có chữ “con” → Hỏi con của đời đó / người đó.</span><br>
+  <span data-vi="• Không có chữ “con” → Hỏi người của đời đó." data-en="• Without it → Ask people of that generation.">• Không có chữ “con” → Hỏi người của đời đó.</span><br>
+  <span data-vi="• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10)." data-en="• Example: “Who is in Gen 9?” asks Gen 9, “children of gen 9” asks children of Gen 9 (i.e. Gen 10).">• Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10).</span><br>
+  <span data-vi="• Gõ không dấu cũng được: doi9, duc thai la ai?" data-en="• Typing without accents works: gen9, who is duc thai?">• Gõ không dấu cũng được: doi9, duc thai la ai?</span>
+</div>
+
+</div>
+</div>
+
 <script>
-function moHuongDan(){ document.getElementById('overlay').classList.add('show'); }
+// Hộp hướng dẫn chatbot (nút ? trong khung chat). capNhatHuongDan() đã có sẵn ở script chính.
+function moHuongDan(){
+  try{ capNhatHuongDan(); }catch(e){}
+  document.getElementById('overlay').classList.add('show');
+}
 function dongHuongDan(){ document.getElementById('overlay').classList.remove('show'); }
 function chonCau(btn){
   var cau = LANG==='en' ? btn.getAttribute('data-en') : btn.getAttribute('data-vi');
   var oNhap = document.getElementById('chat-input');
-  if(oNhap){ oNhap.value = cau; oNhap.focus(); dongHuongDan(); }
-  else { navigator.clipboard.writeText(cau); alert(LANG==='en' ? 'Copied: ' + cau : 'Đã copy: ' + cau); dongHuongDan(); }
+  if(oNhap){ oNhap.value = cau; dongHuongDan(); oNhap.focus(); }
+  else { try{navigator.clipboard.writeText(cau)}catch(e){} alert((LANG==='en' ? 'Copied: ' : 'Đã copy: ') + cau); dongHuongDan(); }
 }
-function capNhatHuongDan(){
-  document.querySelectorAll('#box-huongdan [data-vi]').forEach(function(el){
-    el.textContent = LANG==='en' ? el.getAttribute('data-en') : el.getAttribute('data-vi');
-  });
-}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') dongHuongDan(); });
+// Khung chat nằm SAU script chính nên setLang() chạy lúc tải trang chưa thấy nó:
+// áp lại ngôn ngữ cho chatbot và bảng hướng dẫn ngay khi trang đã dựng xong.
+try{ capNhatChatbotUI(); capNhatHuongDan(); }catch(e){}
 </script>
-<script>
-function chiaSeGiaPha(){
-  var link = 'https://xomdongmieu.github.io/Cay-Gia-Pha/';
-  var text = 'Gia phả họ Nguyễn Đức - Kính mời bà con vào xem và góp ý ạ! ';
-  if(navigator.share){
-    navigator.share({title:'Gia phả họ Nguyễn Đức', text:text, url:link}).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(text + link).then(()=>{
-      alert('Đã copy link! Bạn dán vào Zalo để gửi cho bà con nhé!');
-    });
-  }
-}
-
-</script>
-<!-- HỘP HƯỚNG DẪN -->
-<div id="overlay" onclick="if(event.target===this) dongHuongDan()">
-<div id="box-huongdan" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10001; align-items:center; justify-content:center;">
-<div style="background:#fff; width:92%; max-width:520px; max-height:85vh; overflow-y:auto; border-radius:12px; padding:20px; position:relative;">
-<button onclick="dongHuongDan()" style="position:absolute; top:10px; right:12px; border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
-<h3 data-vi="📜 Hướng dẫn hỏi Chatbot Gia phả" data-en="📜 Family Tree Chatbot Guide">📜 Hướng dẫn hỏi Chatbot Gia phả</h3>
-<p data-vi="Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!" data-en="Just type as you normally speak. Tap a sample question below to auto-fill the chat box!">Bà con chỉ cần gõ như nói chuyện bình thường. Bấm vào câu mẫu bên dưới để tự động điền vào khung chat!</p>
-
-<b data-vi="1. Xem 1 đời" data-en="1. View 1 generation">1. Xem 1 đời</b><br>
-<button onclick="chonCau(this)" data-vi="doi11" data-en="gen11">doi11</button>
-<button onclick="chonCau(this)" data-vi="Đời 9 có những ai?" data-en="Who is in Gen 9?">Đời 9 có những ai?</button>
-<button onclick="chonCau(this)" data-vi="đời 9 là ai" data-en="who is in gen 9">đời 9 là ai</button><br><br>
-
-<b data-vi="2. Hỏi con của 1 đời" data-en="2. Ask children of 1 generation">2. Hỏi con của 1 đời</b><br>
-<button onclick="chonCau(this)" data-vi="con đời 9 là ai" data-en="children of gen 9">con đời 9 là ai</button>
-<button onclick="chonCau(this)" data-vi="đời 9 có con ai" data-en="children of gen 9">đời 9 có con ai</button><br><br>
-
-<b data-vi="3. Hỏi 1 người" data-en="3. Ask about 1 person">3. Hỏi 1 người</b><br>
-<button onclick="chonCau(this)" data-vi="Đức Thái là ai?" data-en="Who is Duc Thai?">Đức Thái là ai?</button>
-<button onclick="chonCau(this)" data-vi="Đức Mùi là ai?" data-en="Who is Duc Mui?">Đức Mùi là ai?</button>
-<button onclick="chonCau(this)" data-vi="Đức Thung là ai?" data-en="Who is Duc Thung?">Đức Thung là ai?</button><br><br>
-
-<b data-vi="4. Hỏi cha / con của 1 người" data-en="4. Ask father / children of 1 person">4. Hỏi cha / con của 1 người</b><br>
-<button onclick="chonCau(this)" data-vi="Cha của Đức Thung là ai?" data-en="Who is the father of Duc Thung?">Cha của Đức Thung là ai?</button>
-<button onclick="chonCau(this)" data-vi="Con của Đức Do là ai?" data-en="Children of Duc Do">Con của Đức Do là ai?</button>
-<button onclick="chonCau(this)" data-vi="Con của Đức Từ là ai?" data-en="Children of Duc Tu">Con của Đức Từ là ai?</button><br><br>
-
-<div style="background:#fffbe6; padding:10px; border-radius:8px;">
-<b data-vi="💡 Lưu ý:" data-en="💡 Note:">💡 Lưu ý:</b>
-<p data-vi="• Có chữ “con” → Hỏi con của đời đó / người đó. • Không có chữ “con” → Hỏi người của đời đó. • Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10). • Gõ không dấu cũng được: doi9, duc thai la ai?" data-en="• With 'children' → Ask children of that generation / person. • Without 'children' → Ask people of that generation. • Example: 'Who is in Gen 9?' asks Gen 9, 'children of gen 9' asks children of Gen 9 (i.e. Gen 10). • Typing without accents works: gen9, who is duc thai?">• Có chữ “con” → Hỏi con của đời đó / người đó. • Không có chữ “con” → Hỏi người của đời đó. • Ví dụ: “Đời 9 có những ai?” là hỏi Đời 9, còn “con đời 9 là ai” là hỏi con của Đời 9 (tức Đời 10). • Gõ không dấu cũng được: doi9, duc thai la ai?</p>
-
-</div>
- </div>
- </div> 
- </div> 
- </body> 
- </html>
+</body>
+</html>
